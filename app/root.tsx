@@ -5,10 +5,45 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
+  Navigate,
+  useNavigate,
 } from "react-router";
-
 import type { Route } from "./+types/root";
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { useAuthStore } from "./stores/authStore";
+import { useEffect, lazy, Suspense } from "react";
 import "./app.css";
+
+// 在開發環境啟動 MSW
+if (import.meta.env.DEV && !import.meta.env.SSR) {
+  import('./mocks').then(({ startMocks }) => {
+    startMocks();
+  }).catch((error) => {
+    console.error('Failed to start MSW:', error);
+  });
+}
+
+// 認證相關路由
+const AUTH_ROUTES = ['/login', '/register', '/forgot-password'];
+
+// 使用 React.lazy 進行懶加載
+const LazyAuthLayout = lazy(() => import('./layouts/AuthLayout'));
+const LazyMainLayout = lazy(() => import('./layouts/MainLayout'));
+
+// Loading 組件
+function LayoutFallback() {
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh'
+    }}>
+      載入中...
+    </div>
+  );
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +77,48 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const { isAuthenticated } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPath = location.pathname;
+
+  // 檢查是否為認證路由
+  const isAuthRoute = AUTH_ROUTES.some(route =>
+    currentPath === route || currentPath.startsWith(route + '/')
+  );
+
+  // 檢查是否為公開路由
+  const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password'];
+  const isPublicRoute = PUBLIC_ROUTES.some(route =>
+    currentPath === route || currentPath.startsWith(route + '/')
+  );
+
+  // 使用 useEffect 處理路由重定向，避免無限循環
+  useEffect(() => {
+    // 需要認證但未登入：重定向到登入頁面
+    if (!isAuthRoute && !isPublicRoute && !isAuthenticated) {
+      navigate('/login', { state: { from: location }, replace: true });
+      return;
+    }
+
+    // 已登入但訪問公開路由（如登入頁）：重定向到首頁
+    if (isPublicRoute && isAuthenticated) {
+      navigate('/', { replace: true });
+      return;
+    }
+  }, [isAuthenticated, isAuthRoute, isPublicRoute, navigate, location]);
+
+  return (
+    <ChakraProvider value={defaultSystem}>
+      <Suspense fallback={<LayoutFallback />}>
+        {isAuthRoute ? (
+          <LazyAuthLayout><Outlet /></LazyAuthLayout>
+        ) : (
+          <LazyMainLayout><Outlet /></LazyMainLayout>
+        )}
+      </Suspense>
+    </ChakraProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
