@@ -37,6 +37,7 @@ export interface AuthState {
     logout: () => void;
     clearError: () => void;
     checkAuth: () => void;
+    updateUserProfile: (updates: any) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -228,6 +229,43 @@ export const useAuthStore = create<AuthState>()(
                         .catch(() => {
                             // 網路錯誤或其他問題，保持當前狀態
                         });
+                }
+            },
+
+            updateUserProfile: async (updates) => {
+                set({ isLoading: true, error: null });
+
+                try {
+                    const response = await fetch('/api/auth/update-profile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${get().token}`,
+                        },
+                        body: JSON.stringify(updates),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || '更新失敗');
+                    }
+
+                    // 更新 store 中的 user 資料
+                    set((state) => ({
+                        user: {
+                            ...state.user,
+                            ...updates,
+                        },
+                        isLoading: false,
+                        error: null,
+                    }));
+                } catch (error: any) {
+                    set({
+                        isLoading: false,
+                        error: error.message || '更新失敗，請稍後再試',
+                    });
+                    throw error;
                 }
             },
         }),

@@ -6,4 +6,6 @@ export default [
     route("register", "routes/register/page.tsx"),
     route("forgot-password", "routes/forgot-password/page.tsx"),
     route("customer-profile", "routes/customer-profile/page.tsx"),
+    route("customer-detail/:id", "routes/customer-detail/page.tsx"),
+    route("profile", "routes/profile/page.tsx"),
 ] satisfies RouteConfig;

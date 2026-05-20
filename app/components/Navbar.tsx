@@ -111,7 +111,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
         if (onSettings) {
             onSettings();
         } else {
-            console.log("開啟個人設定");
+            navigate("/profile");
         }
     };
 

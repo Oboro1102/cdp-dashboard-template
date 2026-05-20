@@ -6,7 +6,6 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
-  Navigate,
   useNavigate,
 } from "react-router";
 import type { Route } from "./+types/root";
@@ -45,6 +44,35 @@ function LayoutFallback() {
   );
 }
 
+// 錯誤顯示元件
+function ErrorFallback({ message, stack }: { message: string; stack?: string }) {
+  return (
+    <main className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl font-bold mb-4">!</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">系統錯誤</h1>
+          <p className="text-gray-600 mb-4">發生了一些問題，請稍後再試</p>
+          <div className="bg-gray-50 rounded p-4 mb-6">
+            <p className="text-sm text-gray-700 font-mono">{message}</p>
+            {import.meta.env.DEV && stack && (
+              <pre className="text-xs text-gray-500 mt-2 overflow-x-auto">
+                {stack}
+              </pre>
+            )}
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            重新載入
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -60,7 +88,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="zh-TW">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -121,6 +149,7 @@ export default function App() {
   );
 }
 
+// 改進的 ErrorBoundary
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
@@ -138,14 +167,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <ErrorFallback message={message} stack={stack} />
   );
 }

@@ -20,6 +20,7 @@ import {
     Cell,
 } from "recharts";
 import { useDashboardStore } from "../stores/dashboardStore";
+import { useMemo } from "react";
 
 interface DashboardPanelProps {
     panel: {
@@ -66,22 +67,29 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
     // value 欄位：使用 yAxis 或第一個數值欄位
     const pieValueField = yAxisField || numericFields[0]?.name || pieFields[1]?.name || pieFields[0]?.name || 'value';
 
+    // 使用 useMemo 進行效能最佳化
     const pieColors = ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'];
-    const pieData = chartData.slice(0, 5).map((record, index) => {
-        const rawValue = record[pieValueField];
-        const value = typeof rawValue === 'number' ? rawValue : Number(rawValue) || 0;
-        return {
-            name: String(record[pieLabelField] || `項目 ${index + 1}`),
-            value: value,
-            color: pieColors[index % pieColors.length],
-        };
-    });
+    const pieData = useMemo(() =>
+        chartData.slice(0, 5).map((record, index) => {
+            const rawValue = record[pieValueField];
+            const value = typeof rawValue === 'number' ? rawValue : Number(rawValue) || 0;
+            return {
+                name: String(record[pieLabelField] || `項目 ${index + 1}`),
+                value: value,
+                color: pieColors[index % pieColors.length],
+            };
+        }),
+        [chartData, pieValueField, pieLabelField]
+    );
 
-    // 長條圖數據處理 - 轉換為 Recharts 格式
-    const barChartData = chartData.map((record) => ({
-        name: String(record[xAxisField || ''] || ''),
-        value: Number(record[yAxisField || '']) || 0,
-    }));
+    // 使用 useMemo 進行效能最佳化
+    const barChartData = useMemo(() =>
+        chartData.map((record) => ({
+            name: String(record[xAxisField || ''] || ''),
+            value: Number(record[yAxisField || '']) || 0,
+        })),
+        [chartData, xAxisField, yAxisField]
+    );
 
     return (
         <Box

@@ -38,6 +38,7 @@ interface DashboardState {
     isModalOpen: boolean;
     editingPanelId: string | null;
     isLoading: boolean;
+    lastFetchTime: number | null;
 
     // Actions
     addPanel: (panel?: Omit<DashboardPanel, 'id' | 'createdAt'>) => void;
@@ -47,7 +48,11 @@ interface DashboardState {
     closeModal: () => void;
     fetchDataSources: () => Promise<void>;
     getDataSource: (id: string) => DataSource | undefined;
+    clearCache: () => void;
 }
+
+// Cache 時效性（5分鐘）
+const CACHE_DURATION = 5 * 60 * 1000;
 
 export const useDashboardStore = create<DashboardState>((set, get) => ({
     panels: [],
@@ -55,6 +60,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     isModalOpen: false,
     editingPanelId: null,
     isLoading: false,
+    lastFetchTime: null,
 
     addPanel: (panel) => {
         const newPanel: DashboardPanel = {
@@ -98,13 +104,31 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     },
 
     fetchDataSources: async () => {
+        const state = get();
+        const now = Date.now();
+
+        // 檢查是否需要重新獲取（快取是否過期）
+        if (state.lastFetchTime && (now - state.lastFetchTime) < CACHE_DURATION) {
+            return;
+        }
+
         // 先檢查 sessionStorage 是否有緩存
         const cached = sessionStorage.getItem('dashboard_data_sources');
         if (cached) {
             try {
                 const data = JSON.parse(cached);
-                set({ dataSources: data, isLoading: false });
-                return;
+                const cacheTime = sessionStorage.getItem('dashboard_data_sources_time');
+                const cacheTimeNum = cacheTime ? parseInt(cacheTime) : 0;
+
+                // 如果快取未過期，使用快取
+                if (cacheTimeNum && (now - cacheTimeNum) < CACHE_DURATION) {
+                    set({
+                        dataSources: data,
+                        isLoading: false,
+                        lastFetchTime: cacheTimeNum,
+                    });
+                    return;
+                }
             } catch (e) {
                 // 解析失敗，繼續從 API 獲取
             }
@@ -112,9 +136,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
         set({ isLoading: true });
 
-        // 重試機制：最多重試 3 次，每次間隔 100ms
+        // 重試機制：最多重試 3 次，使用指數退避
         const maxRetries = 3;
-        const retryDelay = 100;
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
@@ -124,7 +147,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('text/html')) {
                     if (attempt < maxRetries - 1) {
-                        await new Promise(resolve => setTimeout(resolve, retryDelay));
+                        const delay = Math.pow(2, attempt) * 100; // 指數退避
+                        await new Promise(resolve => setTimeout(resolve, delay));
                         continue;
                     }
                 }
@@ -132,9 +156,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
                 const result = await response.json();
 
                 if (result.success) {
-                    // 存入 sessionStorage
+                    // 存入 sessionStorage 並記錄時間
                     sessionStorage.setItem('dashboard_data_sources', JSON.stringify(result.data));
-                    set({ dataSources: result.data, isLoading: false });
+                    sessionStorage.setItem('dashboard_data_sources_time', String(Date.now()));
+                    set({
+                        dataSources: result.data,
+                        isLoading: false,
+                        lastFetchTime: Date.now(),
+                    });
                     return;
                 } else {
                     console.error('獲取數據源失敗:', result.message);
@@ -142,13 +171,15 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
                     return;
                 }
             } catch (error) {
+                console.error(`API 呼叫失敗 (嘗試 ${attempt + 1}/${maxRetries}):`, error);
+
                 // 最後一次嘗試失敗才報錯
                 if (attempt === maxRetries - 1) {
-                    console.error('API 呼叫失敗:', error);
                     set({ isLoading: false });
                 } else {
-                    // 等待後重試
-                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                    // 指數退避
+                    const delay = Math.pow(2, attempt) * 100;
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
         }
@@ -156,5 +187,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
     getDataSource: (id) => {
         return get().dataSources.find((source) => source.id === id);
+    },
+
+    clearCache: () => {
+        sessionStorage.removeItem('dashboard_data_sources');
+        sessionStorage.removeItem('dashboard_data_sources_time');
+        set({
+            dataSources: [],
+            lastFetchTime: null,
+        });
     },
 }));
