@@ -100,7 +100,8 @@ export function DashboardModal() {
             left={0}
             right={0}
             bottom={0}
-            bg="blackAlpha.600"
+            bg="blackAlpha.800"
+            backdropFilter="blur(4px)"
             zIndex={1000}
             display="flex"
             alignItems="center"
@@ -108,9 +109,11 @@ export function DashboardModal() {
             p={4}
         >
             <Box
-                bg="white"
-                borderRadius="xl"
-                boxShadow="2xl"
+                bg="nexus.slate"
+                borderRadius="crisp"
+                border="1px solid"
+                borderColor="whiteAlpha.100"
+                boxShadow="cyberGlow"
                 maxW="500px"
                 w="full"
                 maxH="90vh"
@@ -123,39 +126,41 @@ export function DashboardModal() {
                     px={6}
                     py={4}
                     borderBottomWidth="1px"
-                    borderColor="gray.200"
+                    borderColor="whiteAlpha.100"
                 >
-                    <Text fontSize="lg" fontWeight="semibold" color="gray.900">
+                    <Text fontSize="lg" fontWeight="semibold" color="white">
                         {isEditing ? '編輯面板' : '新增面板'}
                     </Text>
-                    <CloseButton onClick={closeModal} />
+                    <CloseButton onClick={closeModal} color="slate.400" _hover={{ color: "white" }} />
                 </Flex>
 
                 {/* Body */}
                 <VStack gap={4} p={6}>
                     {/* 儀表板名稱 */}
                     <Box w="full">
-                        <Text fontSize="sm" fontWeight="medium" color="gray.700" mb={2}>
+                        <Text fontSize="sm" fontWeight="medium" color="slate.300" mb={2}>
                             儀表板名稱
                         </Text>
                         <Input
                             value={name}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                             placeholder="請輸入名稱"
-                            borderRadius="lg"
-                            borderColor="gray.300"
-                            _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
+                            borderRadius="crisp"
+                            borderColor="whiteAlpha.200"
+                            bg="nexus.obsidian"
+                            color="white"
+                            _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                         />
                     </Box>
 
                     {/* 數據來源 */}
                     <Box w="full">
-                        <Text fontSize="sm" fontWeight="medium" color="gray.700" mb={2}>
+                        <Text fontSize="sm" fontWeight="medium" color="slate.300" mb={2}>
                             數據來源
                         </Text>
                         {isLoading ? (
                             <Flex justify="center" py={4}>
-                                <Spinner size="sm" color="blue.500" />
+                                <Spinner size="sm" color="nexus.emerald" />
                             </Flex>
                         ) : (
                             <>
@@ -166,25 +171,26 @@ export function DashboardModal() {
                                         style={{
                                             width: '100%',
                                             padding: '8px 12px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #D0D5DD',
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
                                             fontSize: '14px',
-                                            backgroundColor: 'white',
+                                            backgroundColor: '#070913',
+                                            color: '#ffffff',
                                             cursor: 'pointer',
                                             outline: 'none',
                                         }}
                                         onFocus={(e) => {
-                                            e.target.style.borderColor = '#3182CE';
-                                            e.target.style.boxShadow = '0 0 0 1px #3182CE';
+                                            e.target.style.borderColor = '#10B981';
+                                            e.target.style.boxShadow = '0 0 0 1px #10B981';
                                         }}
                                         onBlur={(e) => {
-                                            e.target.style.borderColor = '#D0D5DD';
+                                            e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                                             e.target.style.boxShadow = 'none';
                                         }}
                                     >
-                                        <option value="">請選擇數據來源</option>
+                                        <option value="" style={{ backgroundColor: '#101424' }}>請選擇數據來源</option>
                                         {dataSources.map((source) => (
-                                            <option key={source.id} value={source.id}>
+                                            <option key={source.id} value={source.id} style={{ backgroundColor: '#101424' }}>
                                                 {source.name}
                                             </option>
                                         ))}
@@ -192,16 +198,16 @@ export function DashboardModal() {
                                 </Box>
                                 {/* 顯示選中數據源的資料預覽 */}
                                 {selectedDataSource && (
-                                    <Box mt={3} p={3} bg="gray.50" borderRadius="md" fontSize="sm">
-                                        <Text fontSize="xs" color="gray.500" mb={2}>資料預覽：</Text>
+                                    <Box mt={3} p={3} bg="nexus.obsidian" border="1px solid" borderColor="whiteAlpha.100" borderRadius="crisp" fontSize="sm">
+                                        <Text fontSize="xs" color="slate.400" mb={2}>資料預覽：</Text>
                                         <VStack align="start" gap={1}>
                                             {selectedDataSource.data.slice(0, 3).map((record, idx) => (
-                                                <Text key={idx} color="gray.600" fontSize="xs">
+                                                <Text key={idx} color="slate.300" fontSize="xs">
                                                     {selectedDataSource.fields.map(f => `${f.label}: ${record[f.name]}`).join(', ')}
                                                 </Text>
                                             ))}
                                             {selectedDataSource.data.length > 3 && (
-                                                <Text color="gray.400" fontSize="xs">...共 {selectedDataSource.data.length} 筆資料</Text>
+                                                <Text color="slate.500" fontSize="xs">...共 {selectedDataSource.data.length} 筆資料</Text>
                                             )}
                                         </VStack>
                                     </Box>
@@ -212,27 +218,19 @@ export function DashboardModal() {
 
                     {/* 圖表類型 */}
                     <Box w="full">
-                        <Text fontSize="sm" fontWeight="medium" color="gray.700" mb={2}>
+                        <Text fontSize="sm" fontWeight="medium" color="slate.300" mb={2}>
                             圖表類型
                         </Text>
                         <HStack gap={6}>
                             <Button
-                                variant={chartType === 'bar' ? 'solid' : 'outline'}
-                                bg={chartType === 'bar' ? 'blue.600' : 'transparent'}
-                                color={chartType === 'bar' ? 'white' : 'gray.700'}
-                                borderColor="gray.300"
-                                borderRadius="lg"
+                                variant={chartType === 'bar' ? 'nexusPrimary' : 'nexusOutline'}
                                 onClick={() => setChartType('bar')}
                                 size="sm"
                             >
                                 長條圖
                             </Button>
                             <Button
-                                variant={chartType === 'pie' ? 'solid' : 'outline'}
-                                bg={chartType === 'pie' ? 'blue.600' : 'transparent'}
-                                color={chartType === 'pie' ? 'white' : 'gray.700'}
-                                borderColor="gray.300"
-                                borderRadius="lg"
+                                variant={chartType === 'pie' ? 'nexusPrimary' : 'nexusOutline'}
                                 onClick={() => setChartType('pie')}
                                 size="sm"
                             >
@@ -249,24 +247,17 @@ export function DashboardModal() {
                     px={6}
                     py={4}
                     borderTopWidth="1px"
-                    borderColor="gray.200"
+                    borderColor="whiteAlpha.100"
                 >
                     <Button
-                        variant="outline"
+                        variant="nexusOutline"
                         onClick={closeModal}
-                        borderRadius="lg"
-                        borderColor="gray.300"
-                        color="gray.700"
-                        _hover={{ bg: "gray.50" }}
                     >
                         取消
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        bg="blue.600"
-                        color="white"
-                        borderRadius="lg"
-                        _hover={{ bg: "blue.700" }}
+                        variant="nexusPrimary"
                         disabled={!name || !selectedSource}
                     >
                         {isEditing ? '更新' : '建立'}

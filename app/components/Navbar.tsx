@@ -25,15 +25,15 @@ const DefaultLogo = () => (
             <Box
                 w={8}
                 h={8}
-                bg="blue.600"
-                borderRadius="lg"
+                bg="nexus.emerald"
+                borderRadius="crisp"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
             >
-                <Box color="white" fontWeight="bold" fontSize="lg">C</Box>
+                <Box color="nexus.obsidian" fontWeight="bold" fontSize="lg">C</Box>
             </Box>
-            <Box fontSize="xl" fontWeight="semibold" color="gray.900">CDP</Box>
+            <Box fontSize="xl" fontWeight="semibold" color="white">CDP</Box>
         </Flex>
     </Link>
 );
@@ -48,10 +48,10 @@ function NavItemMobile({ item, isActive }: { item: NavItem; isActive: boolean })
                 gap={3}
                 px={4}
                 py={3}
-                borderRadius="lg"
-                bg={isActive ? "blue.50" : "transparent"}
-                color={isActive ? "blue.700" : "gray.700"}
-                _hover={{ bg: "gray.100" }}
+                borderRadius="crisp"
+                bg={isActive ? "nexus.emeraldAlpha" : "transparent"}
+                color={isActive ? "nexus.emerald" : "slate.300"}
+                _hover={{ bg: "nexus.slateLight" }}
                 cursor="pointer"
             >
                 {item.icon}
@@ -71,15 +71,15 @@ function NavItemSidebar({ item, isActive }: { item: NavItem; isActive: boolean }
                 gap={3}
                 px={4}
                 py={2.5}
-                borderRadius="xl"
-                bg={isActive ? "blue.600" : "transparent"}
-                color={isActive ? "white" : "gray.500"}
+                borderRadius="crisp"
+                bg={isActive ? "nexus.emerald" : "transparent"}
+                color={isActive ? "white" : "slate.400"}
                 fontWeight="medium"
                 fontSize="sm"
-                boxShadow={isActive ? "lg" : "none"}
+                boxShadow={isActive ? "emeraldGlow" : "none"}
                 _hover={{
-                    bg: isActive ? "blue.600" : "gray.50",
-                    color: isActive ? "white" : "gray.900",
+                    bg: isActive ? "nexus.emerald" : "nexus.emeraldAlpha",
+                    color: isActive ? "white" : "slate.300",
                 }}
                 cursor="pointer"
             >
@@ -119,7 +119,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
     const logoElement = logo || <DefaultLogo />;
 
     return (
-        <Box bg="white" borderColor="gray.200">
+        <Box bg="nexus.slate" borderBottomWidth="1px" borderColor="whiteAlpha.50">
             <Flex align="center" justify="space-between" h={16} px={4}>
                 {/* 手機版漢堡選單和 Logo */}
                 <HStack gap={4}>
@@ -128,9 +128,9 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
                         as="button"
                         onClick={onToggle}
                         p={2}
-                        borderRadius="md"
-                        color="gray.600"
-                        _hover={{ color: "gray.900", bg: "gray.100" }}
+                        borderRadius="crisp"
+                        color="slate.400"
+                        _hover={{ color: "white", bg: "nexus.emeraldAlpha" }}
                         cursor="pointer"
                         aria-label="切換導覽選單"
                     >
@@ -158,7 +158,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
                             display={{ base: "none", md: "block" }}
                             fontSize="lg"
                             fontWeight="semibold"
-                            color="gray.900"
+                            color="white"
                         >
                             {title}
                         </Box>
@@ -176,9 +176,9 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
                         py={2}
                         fontSize="sm"
                         fontWeight="medium"
-                        color="gray.700"
-                        borderRadius="lg"
-                        _hover={{ color: "gray.900", bg: "gray.100" }}
+                        color="slate.400"
+                        borderRadius="crisp"
+                        _hover={{ color: "white", bg: "nexus.emeraldAlpha" }}
                         cursor="pointer"
                         onClick={handleSettings}
                     >
@@ -200,9 +200,9 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
                         py={2}
                         fontSize="sm"
                         fontWeight="medium"
-                        color="red.600"
-                        borderRadius="lg"
-                        _hover={{ color: "red.700", bg: "red.50" }}
+                        color="red.400"
+                        borderRadius="crisp"
+                        _hover={{ color: "red.300", bg: "rgba(239, 68, 68, 0.1)" }}
                         cursor="pointer"
                         onClick={handleLogout}
                     >
@@ -218,7 +218,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings, title }: NavbarPr
 
             {/* 手機版摺疊選單 */}
             {open && (
-                <Box display={{ base: "block", md: "none" }} borderTopWidth="1px" borderColor="gray.200" bg="white">
+                <Box display={{ base: "block", md: "none" }} borderTopWidth="1px" borderColor="whiteAlpha.50" bg="nexus.slate">
                     <VStack gap={1} align="stretch" px={4} py={3}>
                         {mobileNavItems.map((item) => (
                             <NavItemMobile
@@ -255,13 +255,14 @@ export function Sidebar({ navItems, logo, title }: NavbarProps) {
             display={{ base: "none", md: "flex" }}
             flexDirection="column"
             w={64}
-            bg="white"
-            borderColor="gray.200"
+            bg="nexus.slate"
+            borderRightWidth="1px"
+            borderColor="whiteAlpha.50"
             h="100vh"
             overflowY="auto"
         >
             {/* Logo 區域 */}
-            <Flex h={16} align="center" justify="center" borderColor="gray.200" px={4}>
+            <Flex h={16} align="center" justify="center" borderBottomWidth="1px" borderColor="whiteAlpha.50" px={4}>
                 {logoElement}
             </Flex>
 
@@ -273,7 +274,7 @@ export function Sidebar({ navItems, logo, title }: NavbarProps) {
                             px={4}
                             fontSize="10px"
                             fontWeight="bold"
-                            color="gray.400"
+                            color="slate.400"
                             letterSpacing="widest"
                             textTransform="uppercase"
                             mb={2}

@@ -1,4 +1,4 @@
-import type { Route } from "./+types/home";
+﻿import type { Route } from "./+types/home";
 import { useEffect } from "react";
 import { useDashboardStore } from "../stores/dashboardStore";
 import { DashboardPanel } from "../components/DashboardPanel";
@@ -21,7 +21,7 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { panels, isModalOpen, openModal, fetchDataSources, addPanel } = useDashboardStore();
+  const { panels, isModalOpen, fetchDataSources, addPanel } = useDashboardStore();
 
   // 組件載入時獲取數據源
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </Icon>
-            新增面板
+            新增空白面板
           </Flex>
         </Button>
       </Flex>
@@ -88,8 +88,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </Icon>
-              <Text color="gray.500" fontSize="sm">
-                點擊上方「新增面板」按鈕開始
+              <Text color="gray.500" fontSize="sm" textAlign="center" maxW="sm">
+                目前還沒有面板，先新增空白面板，再完成後續設定。
               </Text>
             </VStack>
           </Box>

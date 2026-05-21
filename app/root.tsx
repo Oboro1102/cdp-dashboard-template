@@ -10,6 +10,7 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { system } from './chakraTheme';
 import { useAuthStore } from "./stores/authStore";
 import { useEffect, lazy, Suspense } from "react";
 import "./app.css";
@@ -137,7 +138,7 @@ export default function App() {
   }, [isAuthenticated, isAuthRoute, isPublicRoute, navigate, location]);
 
   return (
-    <ChakraProvider value={defaultSystem}>
+    <ChakraProvider value={system}>
       <Suspense fallback={<LayoutFallback />}>
         {isAuthRoute ? (
           <LazyAuthLayout><Outlet /></LazyAuthLayout>

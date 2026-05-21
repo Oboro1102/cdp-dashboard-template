@@ -52,14 +52,14 @@ export default function ForgotPasswordPage() {
 
     return (
         <Box display="flex" alignItems="center" justifyContent="center" p={4}>
-            <Card.Root maxW="md" w="full" boxShadow="2xl">
+            <Card.Root maxW="md" w="full" boxShadow="cyberGlow">
                 <Card.Body p={8}>
                     <VStack gap={6} align="stretch">
                         <Box textAlign="center" mb={4}>
-                            <Heading size="lg" mb={2}>
+                            <Heading size="lg" mb={2} color="white">
                                 {step === 'verify' ? '忘記密碼' : '重設密碼'}
                             </Heading>
-                            <Text color="gray.600" fontSize="base">
+                            <Text color="slate.400" fontSize="base">
                                 {step === 'verify'
                                     ? '請輸入您的電子郵件以驗證帳號'
                                     : '請輸入新的密碼'}
@@ -67,13 +67,13 @@ export default function ForgotPasswordPage() {
                         </Box>
 
                         {error && (
-                            <Alert.Root status="error" borderRadius="md">
+                            <Alert.Root status="error" borderRadius="crisp">
                                 <Alert.Indicator />
                                 <Alert.Content>
                                     <Alert.Title>錯誤</Alert.Title>
                                     <Alert.Description>{error}</Alert.Description>
                                 </Alert.Content>
-                                <Button size="sm" ml="auto" variant="ghost" onClick={clearError}>✕</Button>
+                                <Button size="sm" ml="auto" variant="ghost" color="slate.400" _hover={{ color: "white" }} onClick={clearError}>✕</Button>
                             </Alert.Root>
                         )}
 
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
                             <form onSubmit={handleVerify}>
                                 <VStack gap={6}>
                                     <Field.Root required>
-                                        <Field.Label>電子郵件</Field.Label>
+                                        <Field.Label color="slate.300">電子郵件</Field.Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -89,21 +89,24 @@ export default function ForgotPasswordPage() {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             size="lg"
+                                            borderRadius="crisp"
+                                            borderColor="whiteAlpha.200"
+                                            bg="nexus.obsidian"
+                                            color="white"
+                                            _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                             disabled={isLoading}
                                         />
                                     </Field.Root>
 
                                     <Button
                                         type="submit"
-                                        colorScheme="orange"
+                                        variant="nexusPrimary"
                                         size="lg"
                                         w="full"
-                                        h="12"
-                                        fontSize="base"
-                                        fontWeight="medium"
                                         loading={isLoading}
+                                        loadingText="驗證中..."
                                     >
-                                        {isLoading ? '驗證中...' : '驗證帳號'}
+                                        驗證帳號
                                     </Button>
                                 </VStack>
                             </form>
@@ -111,7 +114,7 @@ export default function ForgotPasswordPage() {
                             <form onSubmit={handleResetPassword}>
                                 <VStack gap={6}>
                                     <Field.Root required invalid={!!passwordError}>
-                                        <Field.Label>新密碼</Field.Label>
+                                        <Field.Label color="slate.300">新密碼</Field.Label>
                                         <Input
                                             id="newPassword"
                                             type="password"
@@ -122,6 +125,11 @@ export default function ForgotPasswordPage() {
                                                 setPasswordError('');
                                             }}
                                             size="lg"
+                                            borderRadius="crisp"
+                                            borderColor="whiteAlpha.200"
+                                            bg="nexus.obsidian"
+                                            color="white"
+                                            _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                             disabled={isLoading}
                                         />
                                         {passwordError && (
@@ -130,7 +138,7 @@ export default function ForgotPasswordPage() {
                                     </Field.Root>
 
                                     <Field.Root required invalid={!!passwordError}>
-                                        <Field.Label>確認新密碼</Field.Label>
+                                        <Field.Label color="slate.300">確認新密碼</Field.Label>
                                         <Input
                                             id="confirmPassword"
                                             type="password"
@@ -141,6 +149,11 @@ export default function ForgotPasswordPage() {
                                                 setPasswordError('');
                                             }}
                                             size="lg"
+                                            borderRadius="crisp"
+                                            borderColor="whiteAlpha.200"
+                                            bg="nexus.obsidian"
+                                            color="white"
+                                            _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                             disabled={isLoading}
                                         />
                                         {passwordError && (
@@ -150,27 +163,25 @@ export default function ForgotPasswordPage() {
 
                                     <Button
                                         type="submit"
-                                        colorScheme="orange"
+                                        variant="nexusPrimary"
                                         size="lg"
                                         w="full"
-                                        h="12"
-                                        fontSize="base"
-                                        fontWeight="medium"
                                         loading={isLoading}
+                                        loadingText="重設中..."
                                     >
-                                        {isLoading ? '重設中...' : '重設密碼'}
+                                        重設密碼
                                     </Button>
                                 </VStack>
                             </form>
                         )}
 
-                        <Text textAlign="center" fontSize="sm" color="gray.600" mt={6}>
+                        <Text textAlign="center" fontSize="sm" color="slate.400" mt={6}>
                             記起密碼了？{' '}
                             <Link
                                 to="/login"
-                                style={{ color: '#2563eb', fontWeight: 500 }}
-                                onMouseEnter={(e) => (e.currentTarget.style.color = '#1e40af')}
-                                onMouseLeave={(e) => (e.currentTarget.style.color = '#2563eb')}
+                                style={{ color: '#10B981', fontWeight: 500 }}
+                                onMouseEnter={(e) => (e.currentTarget.style.color = '#059669')}
+                                onMouseLeave={(e) => (e.currentTarget.style.color = '#10B981')}
                             >
                                 返回登入
                             </Link>

@@ -21,6 +21,6 @@ export default defineConfig({
   // 建置優化
   build: {
     target: 'esnext',
-    minify: 'terser',
+    minify: 'esbuild',
   },
 });

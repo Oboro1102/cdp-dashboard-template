@@ -132,7 +132,7 @@ function CustomerProfileContent() {
                     key={i}
                     size="sm"
                     variant={i === page ? 'solid' : 'outline'}
-                    colorScheme={i === page ? 'blue' : 'gray'}
+                    colorPalette={i === page ? 'teal' : 'gray'}
                     onClick={() => handlePageChange(i)}
                     mx={1}
                 >
@@ -142,9 +142,11 @@ function CustomerProfileContent() {
         }
 
         return (
-            <HStack gap={2} justify="center" mt={4}>
+            <HStack gap={2} justify="center" mt={6}>
                 <Button
                     size="sm"
+                    variant="outline"
+                    colorPalette="gray"
                     onClick={() => handlePageChange(1)}
                     disabled={page === 1}
                 >
@@ -152,6 +154,8 @@ function CustomerProfileContent() {
                 </Button>
                 <Button
                     size="sm"
+                    variant="outline"
+                    colorPalette="gray"
                     onClick={() => handlePageChange(page - 1)}
                     disabled={page === 1}
                 >
@@ -160,6 +164,8 @@ function CustomerProfileContent() {
                 {pages}
                 <Button
                     size="sm"
+                    variant="outline"
+                    colorPalette="gray"
                     onClick={() => handlePageChange(page + 1)}
                     disabled={page === totalPages}
                 >
@@ -167,6 +173,8 @@ function CustomerProfileContent() {
                 </Button>
                 <Button
                     size="sm"
+                    variant="outline"
+                    colorPalette="gray"
                     onClick={() => handlePageChange(totalPages)}
                     disabled={page === totalPages}
                 >
@@ -179,15 +187,15 @@ function CustomerProfileContent() {
     return (
         <Box width="100%">
             <Box mb={6}>
-                <Heading size="lg" mb={2}>會員清單</Heading>
-                <Text color="gray.600">管理所有會員資訊</Text>
+                <Heading size="lg" mb={2} color="white">會員清單</Heading>
+                <Text color="slate.400">管理所有會員資訊</Text>
             </Box>
 
             <Card.Root>
-                <Card.Body>
-                    <Flex justify="space-between" align="center" mb={4}>
+                <Card.Body p={6}>
+                    <Flex justify="space-between" align="center" mb={6}>
                         <HStack gap={4}>
-                            <Text>每頁顯示：</Text>
+                            <Text color="slate.300">每頁顯示：</Text>
                             <Box
                                 w="120px"
                                 position="relative"
@@ -198,30 +206,31 @@ function CustomerProfileContent() {
                                     style={{
                                         width: '100%',
                                         padding: '8px 12px',
-                                        borderRadius: '8px',
-                                        border: '1px solid #D0D5DD',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
                                         fontSize: '14px',
-                                        backgroundColor: 'white',
+                                        backgroundColor: '#070913',
+                                        color: '#ffffff',
                                         cursor: 'pointer',
                                         outline: 'none',
                                     }}
                                     onFocus={(e) => {
-                                        e.target.style.borderColor = '#3182CE';
-                                        e.target.style.boxShadow = '0 0 0 1px #3182CE';
+                                        e.target.style.borderColor = '#10B981';
+                                        e.target.style.boxShadow = '0 0 0 1px #10B981';
                                     }}
                                     onBlur={(e) => {
-                                        e.target.style.borderColor = '#D0D5DD';
+                                        e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                                         e.target.style.boxShadow = 'none';
                                     }}
                                 >
                                     {PAGE_SIZE_OPTIONS.map(option => (
-                                        <option key={option} value={option}>
+                                        <option key={option} value={option} style={{ backgroundColor: '#101424' }}>
                                             {option} 筆
                                         </option>
                                     ))}
                                 </select>
                             </Box>
-                            <Text fontSize="sm" color="gray.500">
+                            <Text fontSize="sm" color="slate.500">
                                 共 {total} 位會員
                             </Text>
                         </HStack>
@@ -229,12 +238,12 @@ function CustomerProfileContent() {
 
                     {loading && (
                         <Flex justify="center" py={10}>
-                            <Spinner size="xl" />
+                            <Spinner size="xl" color="nexus.emerald" />
                         </Flex>
                     )}
 
                     {error && (
-                        <Alert.Root status="error" mb={4}>
+                        <Alert.Root status="error" mb={4} borderRadius="crisp">
                             <Alert.Indicator />
                             <Alert.Content>
                                 <Alert.Title>載入失敗</Alert.Title>
@@ -246,43 +255,43 @@ function CustomerProfileContent() {
                     {!loading && !error && (
                         <>
                             <Box width="100%" overflowX="auto">
-                                <Table.Root size="sm">
+                                <Table.Root size="sm" variant="line">
                                     <Table.Header>
-                                        <Table.Row>
-                                            <Table.ColumnHeader>Email</Table.ColumnHeader>
-                                            <Table.ColumnHeader>電話</Table.ColumnHeader>
-                                            <Table.ColumnHeader>會員等級</Table.ColumnHeader>
-                                            <Table.ColumnHeader>CLV 價值</Table.ColumnHeader>
-                                            <Table.ColumnHeader>活躍度</Table.ColumnHeader>
-                                            <Table.ColumnHeader>營收貢獻</Table.ColumnHeader>
-                                            <Table.ColumnHeader>最後購買時間</Table.ColumnHeader>
-                                            <Table.ColumnHeader>註冊時間</Table.ColumnHeader>
-                                            <Table.ColumnHeader>操作</Table.ColumnHeader>
+                                        <Table.Row borderColor="whiteAlpha.100">
+                                            <Table.ColumnHeader color="slate.400">Email</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">電話</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">會員等級</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">CLV 價值</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">活躍度</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">營收貢獻</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">最後購買時間</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400">註冊時間</Table.ColumnHeader>
+                                            <Table.ColumnHeader color="slate.400" textAlign="right">操作</Table.ColumnHeader>
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
                                         {customers.map((customer) => (
-                                            <Table.Row key={customer.id}>
-                                                <Table.Cell>{customer.email}</Table.Cell>
-                                                <Table.Cell>{customer.phone}</Table.Cell>
+                                            <Table.Row key={customer.id} borderColor="whiteAlpha.50" _hover={{ bg: "whiteAlpha.50" }}>
+                                                <Table.Cell color="slate.200">{customer.email}</Table.Cell>
+                                                <Table.Cell color="slate.300">{customer.phone}</Table.Cell>
                                                 <Table.Cell>
-                                                    <Badge colorScheme={getMembershipLevelColor(customer.membershipLevel)}>
+                                                    <Badge colorPalette={getMembershipLevelColor(customer.membershipLevel)} variant="subtle">
                                                         {customer.membershipLevel.toUpperCase()}
                                                     </Badge>
                                                 </Table.Cell>
-                                                <Table.Cell>${customer.clvValue.toFixed(2)}</Table.Cell>
+                                                <Table.Cell color="slate.300">${customer.clvValue.toFixed(2)}</Table.Cell>
                                                 <Table.Cell>
-                                                    <Text color={customer.activityScore > 50 ? 'green.500' : 'orange.500'}>
+                                                    <Text color={customer.activityScore > 50 ? 'nexus.emerald' : 'orange.400'} fontWeight="medium">
                                                         {customer.activityScore}
                                                     </Text>
                                                 </Table.Cell>
-                                                <Table.Cell>${customer.revenueContribution.toFixed(2)}</Table.Cell>
-                                                <Table.Cell>{formatDate(customer.lastPurchaseTime)}</Table.Cell>
-                                                <Table.Cell>{formatDate(customer.registrationTime)}</Table.Cell>
-                                                <Table.Cell>
+                                                <Table.Cell color="slate.300">${customer.revenueContribution.toFixed(2)}</Table.Cell>
+                                                <Table.Cell color="slate.400">{formatDate(customer.lastPurchaseTime)}</Table.Cell>
+                                                <Table.Cell color="slate.400">{formatDate(customer.registrationTime)}</Table.Cell>
+                                                <Table.Cell textAlign="right">
                                                     <Button
                                                         size="sm"
-                                                        variant="outline"
+                                                        variant="nexusOutline"
                                                         onClick={() => navigate(`/customer-detail/${customer.id}`)}
                                                     >
                                                         查看詳細資料
@@ -296,8 +305,8 @@ function CustomerProfileContent() {
 
                             {totalPages > 1 && renderPagination()}
 
-                            <Flex justify="center" mt={4}>
-                                <Text fontSize="sm" color="gray.500">
+                            <Flex justify="center" mt={6}>
+                                <Text fontSize="sm" color="slate.500">
                                     第 {page} 頁，共 {totalPages} 頁
                                 </Text>
                             </Flex>

@@ -20,6 +20,10 @@ export interface User {
     email: string;
     name: string;
     createdAt: string;
+    phone?: string;
+    gender?: 'male' | 'female' | 'other';
+    birthday?: string;
+    membershipLevel?: string;
 }
 
 export interface AuthState {
