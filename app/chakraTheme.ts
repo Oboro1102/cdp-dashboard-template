@@ -56,9 +56,9 @@ const nexusConfig = defineConfig({
                 variants: {
                     variant: {
                         nexusPrimary: {
-                            bg: "linear-gradient(to r, {colors.nexus.emerald}, #14b8a6)",
+                            background: "linear-gradient(90deg, var(--chakra-colors-nexus-emerald) 0%, #14b8a6 100%)",
                             color: "{colors.nexus.obsidian}",
-                            fontSize: "xs",
+                            fontSize: "sm",
                             boxShadow: "{shadows.emeraldGlow}",
                             _hover: {
                                 opacity: 0.9,
@@ -71,15 +71,18 @@ const nexusConfig = defineConfig({
                         nexusOutline: {
                             bg: "transparent",
                             border: "1px solid",
-                            borderColor: "whiteAlpha.200",
+                            borderColor: "whiteAlpha.100",
                             color: "{colors.slate.300}",
-                            fontSize: "xs",
+                            fontSize: "sm",
                             _hover: {
                                 bg: "whiteAlpha.50",
-                                borderColor: "whiteAlpha.300",
+                                borderColor: "whiteAlpha.200",
                             },
                         }
                     }
+                },
+                defaultVariants: {
+                    variant: "nexusPrimary",
                 }
             }),
             // 狀態微章 (Badge)
@@ -112,37 +115,34 @@ const nexusConfig = defineConfig({
                 slots: ["root", "header", "body", "footer"],
                 base: {
                     root: {
-                        bg: "{colors.nexus.slate}",
-                        borderColor: "whiteAlpha.50",
+                        bg: "rgba(10, 14, 28, 0.92)",
+                        borderColor: "whiteAlpha.100",
                         borderWidth: "1px",
                         borderRadius: "{radii.crisp}",
+                        boxShadow: "{shadows.cyberGlow}",
                         p: "5",
                         overflow: "hidden",
                         position: "relative",
                         transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-                        _hover: {
-                            transform: "translateY(-2px)",
-                            borderColor: "whiteAlpha.100",
-                        },
+                        // _hover: {
+                        //     transform: "translateY(-2px)",
+                        //     borderColor: "whiteAlpha.100",
+                        // },
                     }
                 },
                 variants: {
                     variant: {
-                        light: {
-                            root: {
-                                bg: "white",
-                                borderColor: "{colors.slate.200}",
-                                boxShadow: "sm",
-                            }
-                        },
                         cyber: {
                             root: {
-                                bg: "rgba(18, 14, 46, 0.4)",
-                                borderColor: "teal.500/15",
+                                bg: "rgba(8, 11, 22, 0.92)",
+                                borderColor: "rgba(16, 185, 129, 0.16)",
                                 boxShadow: "{shadows.cyberGlow}",
                             }
                         }
-                    }
+                    },
+                },
+                defaultVariants: {
+                    variant: "cyber",
                 }
             })
         }

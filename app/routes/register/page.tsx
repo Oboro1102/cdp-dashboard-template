@@ -33,7 +33,7 @@ export default function RegisterPage() {
                     <VStack gap={6} align="stretch">
                         <Box textAlign="center" mb={4}>
                             <Heading size="lg" mb={2} color="white">
-                                建立帳戶
+                                建立帳號
                             </Heading>
                             <Text color="slate.400" fontSize="base">
                                 填寫以下資訊以註冊
@@ -141,7 +141,7 @@ export default function RegisterPage() {
                         </form>
 
                         <Text textAlign="center" fontSize="sm" color="slate.400" mt={6}>
-                            已經有帳戶？{' '}
+                            已經有帳號？{' '}
                             <Link
                                 to="/login"
                                 style={{ color: '#10B981', fontWeight: 500 }}

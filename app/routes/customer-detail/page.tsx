@@ -13,7 +13,7 @@ import {
     Icon,
     Table,
     Drawer,
-    
+
     DrawerContent,
     DrawerHeader,
     DrawerBody,
@@ -334,31 +334,32 @@ export default function CustomerDetailPage() {
                             </Icon>
                             購買歷史
                         </Heading>
-                        <Box overflowX="auto">
-                            <Table.Root size="sm" variant="line">
+                        <Box overflowX="auto" bg="transparent">
+                            <Table.Root size="sm" variant="line" bg="transparent">
                                 <Table.Header>
-                                    <Table.Row borderColor="whiteAlpha.100">
-                                        <Table.ColumnHeader color="slate.400">訂單編號</Table.ColumnHeader>
-                                        <Table.ColumnHeader color="slate.400">購買日期</Table.ColumnHeader>
-                                        <Table.ColumnHeader color="slate.400">金額</Table.ColumnHeader>
-                                        <Table.ColumnHeader color="slate.400">狀態</Table.ColumnHeader>
-                                        <Table.ColumnHeader color="slate.400" textAlign="right">操作</Table.ColumnHeader>
+                                    <Table.Row bg="transparent">
+                                        {['訂單編號', '購買日期', '金額', '狀態', '操作'].map((column, index) => (<Table.ColumnHeader color="slate.400" borderColor='whiteAlpha.100' textAlign={index === 4 ? 'right' : 'left'}>{column}</Table.ColumnHeader>)
+                                        )}
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
                                     {customer.purchaseHistory.map((purchase) => (
-                                        <Table.Row key={purchase.id} borderColor="whiteAlpha.50" _hover={{ bg: "whiteAlpha.50" }}>
-                                            <Table.Cell>
-                                                <Text fontWeight="semibold" color="slate.200">{purchase.orderId}</Text>
+                                        <Table.Row
+                                            key={purchase.id}
+                                            bg="transparent"
+                                            _hover={{ bg: "whiteAlpha.50" }}
+                                        >
+                                            <Table.Cell borderColor="whiteAlpha.50">
+                                                <Text fontWeight="semibold" color="slate.300">{purchase.orderId}</Text>
                                             </Table.Cell>
-                                            <Table.Cell color="slate.300">{formatDate(purchase.purchaseDate)}</Table.Cell>
-                                            <Table.Cell color="slate.300">{formatCurrency(purchase.amount)}</Table.Cell>
-                                            <Table.Cell>
+                                            <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{formatDate(purchase.purchaseDate)}</Table.Cell>
+                                            <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{formatCurrency(purchase.amount)}</Table.Cell>
+                                            <Table.Cell borderColor="whiteAlpha.50">
                                                 <Badge colorPalette={getStatusColor(purchase.status)} variant="outline">
                                                     {purchase.status === 'completed' ? '已完成' : purchase.status === 'pending' ? '待處理' : '已取消'}
                                                 </Badge>
                                             </Table.Cell>
-                                            <Table.Cell textAlign="right">
+                                            <Table.Cell borderColor="whiteAlpha.50" textAlign="right">
                                                 <Button
                                                     size="sm"
                                                     variant="nexusOutline"

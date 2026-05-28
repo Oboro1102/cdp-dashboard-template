@@ -1,0 +1,235 @@
+import { useEffect, useRef } from 'react';
+
+type Orb = {
+  x: number;
+  y: number;
+  radius: number;
+  vx: number;
+  vy: number;
+  hue: number;
+  alpha: number;
+  phase: number;
+};
+
+type Dust = {
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  size: number;
+  alpha: number;
+  phase: number;
+};
+
+const ThreeBackground = () => {
+  const mountRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!mountRef.current) return;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (!context) return;
+
+    canvas.style.position = 'absolute';
+    canvas.style.inset = '0';
+    canvas.style.display = 'block';
+    mountRef.current.appendChild(canvas);
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let frameId = 0;
+    let noisePattern: CanvasPattern | null = null;
+
+    const orbPalette = [168, 172, 160];
+    let orbs: Orb[] = [];
+
+    const dust: Dust[] = [];
+
+    const createDust = () => {
+      dust.length = 0;
+      const count = Math.round((width * height) / 22000);
+
+      for (let i = 0; i < count; i += 1) {
+        dust.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          z: Math.random(),
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: (Math.random() - 0.5) * 0.16,
+          size: 0.8 + Math.random() * 1.8,
+          alpha: 0.12 + Math.random() * 0.28,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    const createOrbs = () => {
+      orbs = orbPalette.map((hue, index) => ({
+        x: width * (0.22 + index * 0.28),
+        y: height * (0.2 + index * 0.24),
+        radius: 260 + index * 70,
+        vx: (index % 2 === 0 ? 1 : -1) * (0.02 + index * 0.008),
+        vy: (index % 2 === 0 ? -1 : 1) * (0.016 + index * 0.006),
+        hue,
+        alpha: 0.12 - index * 0.02,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    };
+
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const noiseCanvas = document.createElement('canvas');
+      noiseCanvas.width = 160;
+      noiseCanvas.height = 160;
+      const noiseContext = noiseCanvas.getContext('2d');
+
+      if (noiseContext) {
+        const imageData = noiseContext.createImageData(
+          noiseCanvas.width,
+          noiseCanvas.height
+        );
+
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          const value = Math.floor(Math.random() * 255);
+          imageData.data[i] = value;
+          imageData.data[i + 1] = value;
+          imageData.data[i + 2] = value;
+          imageData.data[i + 3] = Math.random() > 0.86 ? 28 : 10;
+        }
+
+        noiseContext.putImageData(imageData, 0, 0);
+        noisePattern = context.createPattern(noiseCanvas, 'repeat');
+      }
+
+      createDust();
+      createOrbs();
+    };
+
+    const draw = (time: number) => {
+      context.clearRect(0, 0, width, height);
+
+      const base = context.createLinearGradient(0, 0, width, height);
+      base.addColorStop(0, '#040712');
+      base.addColorStop(0.45, '#050b16');
+      base.addColorStop(1, '#02040b');
+      context.fillStyle = base;
+      context.fillRect(0, 0, width, height);
+
+      context.save();
+      context.globalCompositeOperation = 'lighter';
+
+      orbs.forEach((orb, index) => {
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+        orb.phase += 0.0008 + index * 0.0002;
+
+        if (orb.x < -orb.radius) orb.x = width + orb.radius;
+        if (orb.x > width + orb.radius) orb.x = -orb.radius;
+        if (orb.y < -orb.radius) orb.y = height + orb.radius;
+        if (orb.y > height + orb.radius) orb.y = -orb.radius;
+
+        const x = orb.x + Math.sin(orb.phase + time * 0.00005) * 6;
+        const y = orb.y + Math.cos(orb.phase + time * 0.00005) * 5;
+        const gradient = context.createRadialGradient(
+          x,
+          y,
+          orb.radius * 0.08,
+          x,
+          y,
+          orb.radius
+        );
+
+        gradient.addColorStop(0, `hsla(${orb.hue}, 85%, 58%, ${orb.alpha})`);
+        gradient.addColorStop(0.35, `hsla(${orb.hue}, 75%, 40%, ${orb.alpha * 0.5})`);
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(x, y, orb.radius, 0, Math.PI * 2);
+        context.fill();
+      });
+
+      context.restore();
+
+      context.save();
+      context.globalCompositeOperation = 'screen';
+
+      for (const dot of dust) {
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+        dot.phase += 0.01;
+
+        if (dot.x < -20) dot.x = width + 20;
+        if (dot.x > width + 20) dot.x = -20;
+        if (dot.y < -20) dot.y = height + 20;
+        if (dot.y > height + 20) dot.y = -20;
+
+        const twinkle = 0.5 + Math.sin(dot.phase + time * 0.001) * 0.5;
+        const alpha = dot.alpha * twinkle;
+        const parallax = 1 - dot.z * 0.35;
+
+        context.fillStyle = `rgba(229, 231, 235, ${alpha})`;
+        context.beginPath();
+        context.arc(dot.x, dot.y, dot.size * parallax, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      context.restore();
+
+      if (noisePattern) {
+        context.save();
+        context.globalAlpha = 0.06;
+        context.fillStyle = noisePattern;
+        context.fillRect(0, 0, width, height);
+        context.restore();
+      }
+
+      frameId = window.requestAnimationFrame(draw);
+    };
+
+    resize();
+    frameId = window.requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      window.cancelAnimationFrame(frameId);
+
+      if (mountRef.current && canvas.parentNode === mountRef.current) {
+        mountRef.current.removeChild(canvas);
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={mountRef}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    />
+  );
+};
+
+export default ThreeBackground;

@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import {
-    Box,
-    Heading,
-    Text,
-    Table,
-    VStack,
-    HStack,
-    Button,
-    Spinner,
     Alert,
-    Flex,
     Badge,
+    Box,
+    Button,
     Card,
+    Flex,
+    HStack,
+    Pagination,
+    Portal,
+    Select,
+    Spinner,
+    Table,
+    Text,
+    Heading,
+    createListCollection,
 } from '@chakra-ui/react';
 
 interface Customer {
@@ -39,7 +42,13 @@ interface CustomerListResponse {
     totalPages: number;
 }
 
-const PAGE_SIZE_OPTIONS = [10, 20, 50];
+const pageSizeOptions = createListCollection({
+    items: [
+        { label: '10', value: '10' },
+        { label: '20', value: '20' },
+        { label: '50', value: '50' },
+    ],
+});
 
 function CustomerProfileContent() {
     const navigate = useNavigate();
@@ -61,16 +70,20 @@ function CustomerProfileContent() {
     const fetchCustomers = useCallback(async () => {
         setLoading(true);
         setError(null);
+
         try {
             const response = await fetch(`/api/customers?page=${page}&limit=${limit}`);
+
             if (!response.ok) {
-                throw new Error('無法取得會員資料');
+                throw new Error('無法取得客戶資料');
             }
-            const result = await response.json();
-            const customers = result.data || result;
-            setCustomers(Array.isArray(customers) ? customers : []);
-            setTotal(result.total || 0);
-            setTotalPages(result.totalPages || 0);
+
+            const result: CustomerListResponse | Customer[] = await response.json();
+            const data = Array.isArray(result) ? result : result.data || [];
+
+            setCustomers(Array.isArray(data) ? data : []);
+            setTotal(Array.isArray(result) ? data.length : result.total || 0);
+            setTotalPages(Array.isArray(result) ? Math.ceil(data.length / limit) : result.totalPages || 0);
         } catch (err) {
             setError(err instanceof Error ? err.message : '發生未知錯誤');
         } finally {
@@ -91,10 +104,13 @@ function CustomerProfileContent() {
         }
     };
 
-    const handleLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newLimit = parseInt(event.target.value, 10);
+    const handleLimitChange = (newLimitValue: string) => {
+        const newLimit = parseInt(newLimitValue, 10);
+        if (Number.isNaN(newLimit)) return;
+
         setLimit(newLimit);
         setPage(1);
+
         const params = new URLSearchParams(searchParams);
         params.set('page', '1');
         params.set('limit', newLimit.toString());
@@ -103,11 +119,16 @@ function CustomerProfileContent() {
 
     const getMembershipLevelColor = (level: string) => {
         switch (level) {
-            case 'platinum': return 'purple';
-            case 'gold': return 'yellow';
-            case 'silver': return 'gray';
-            case 'bronze': return 'orange';
-            default: return 'gray';
+            case 'platinum':
+                return 'purple';
+            case 'gold':
+                return 'yellow';
+            case 'silver':
+                return 'gray';
+            case 'bronze':
+                return 'orange';
+            default:
+                return 'gray';
         }
     };
 
@@ -116,124 +137,80 @@ function CustomerProfileContent() {
         return new Date(dateString).toLocaleDateString('zh-TW');
     };
 
-    const renderPagination = () => {
-        const pages = [];
-        const maxVisiblePages = 5;
-        let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
-                <Button
-                    key={i}
-                    size="sm"
-                    variant={i === page ? 'solid' : 'outline'}
-                    colorPalette={i === page ? 'teal' : 'gray'}
-                    onClick={() => handlePageChange(i)}
-                    mx={1}
-                >
-                    {i}
-                </Button>
-            );
-        }
-
-        return (
-            <HStack gap={2} justify="center" mt={6}>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    colorPalette="gray"
-                    onClick={() => handlePageChange(1)}
-                    disabled={page === 1}
-                >
-                    首頁
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    colorPalette="gray"
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1}
-                >
-                    上一頁
-                </Button>
-                {pages}
-                <Button
-                    size="sm"
-                    variant="outline"
-                    colorPalette="gray"
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page === totalPages}
-                >
-                    下一頁
-                </Button>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    colorPalette="gray"
-                    onClick={() => handlePageChange(totalPages)}
-                    disabled={page === totalPages}
-                >
-                    末頁
-                </Button>
-            </HStack>
-        );
-    };
-
     return (
         <Box width="100%">
             <Box mb={6}>
-                <Heading size="lg" mb={2} color="white">會員清單</Heading>
-                <Text color="slate.400">管理所有會員資訊</Text>
+                <Heading size="lg" mb={2} color="white">
+                    客戶資料
+                </Heading>
+                <Text color="slate.400">檢視與管理客戶清單</Text>
             </Box>
 
             <Card.Root>
                 <Card.Body p={6}>
-                    <Flex justify="space-between" align="center" mb={6}>
-                        <HStack gap={4}>
-                            <Text color="slate.300">每頁顯示：</Text>
-                            <Box
-                                w="120px"
-                                position="relative"
+                    <Select.Root
+                        mb={6}
+                        width="160px"
+                        size="sm"
+                        collection={pageSizeOptions}
+                        value={[String(limit)]}
+                        onValueChange={(details) => handleLimitChange(details.value[0] ?? '10')}
+                    >
+                        <Select.HiddenSelect />
+                        <Select.Label color="slate.400" fontSize="sm" mb={2}>
+                            每頁顯示
+                        </Select.Label>
+                        <Select.Control>
+                            <Select.Trigger
+                                bg="nexus.obsidian"
+                                color="white"
+                                border="1px solid"
+                                borderColor="whiteAlpha.200"
+                                borderRadius="crisp"
+                                _hover={{ borderColor: 'whiteAlpha.300', bg: 'nexus.slate' }}
+                                _focusVisible={{
+                                    borderColor: 'nexus.emerald',
+                                    boxShadow: '0 0 0 1px var(--chakra-colors-nexus-emerald)',
+                                }}
                             >
-                                <select
-                                    value={limit}
-                                    onChange={handleLimitChange}
-                                    style={{
-                                        width: '100%',
-                                        padding: '8px 12px',
-                                        borderRadius: '12px',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        fontSize: '14px',
-                                        backgroundColor: '#070913',
-                                        color: '#ffffff',
-                                        cursor: 'pointer',
-                                        outline: 'none',
-                                    }}
-                                    onFocus={(e) => {
-                                        e.target.style.borderColor = '#10B981';
-                                        e.target.style.boxShadow = '0 0 0 1px #10B981';
-                                    }}
-                                    onBlur={(e) => {
-                                        e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                        e.target.style.boxShadow = 'none';
-                                    }}
+                                <Select.ValueText placeholder="請選擇筆數" color="slate.200" />
+                            </Select.Trigger>
+                            <Select.IndicatorGroup color="slate.400">
+                                <Select.Indicator color="slate.400" />
+                            </Select.IndicatorGroup>
+                        </Select.Control>
+                        <Portal>
+                            <Select.Positioner>
+                                <Select.Content
+                                    bg="nexus.slate"
+                                    border="1px solid"
+                                    borderColor="whiteAlpha.200"
+                                    borderRadius="crisp"
+                                    boxShadow="cyberGlow"
+                                    p={1}
                                 >
-                                    {PAGE_SIZE_OPTIONS.map(option => (
-                                        <option key={option} value={option} style={{ backgroundColor: '#101424' }}>
-                                            {option} 筆
-                                        </option>
+                                    {pageSizeOptions.items.map((item) => (
+                                        <Select.Item
+                                            item={item}
+                                            key={item.value}
+                                            color="slate.200"
+                                            borderRadius="10px"
+                                            _highlighted={{ bg: 'whiteAlpha.100', color: 'white' }}
+                                            _selected={{ bg: 'nexus.emeraldAlpha', color: 'nexus.emerald' }}
+                                        >
+                                            {item.label}
+                                            <Select.ItemIndicator />
+                                        </Select.Item>
                                     ))}
-                                </select>
-                            </Box>
-                            <Text fontSize="sm" color="slate.500">
-                                共 {total} 位會員
-                            </Text>
-                        </HStack>
+                                </Select.Content>
+                            </Select.Positioner>
+                        </Portal>
+                    </Select.Root>
+
+                    <Flex justify="space-between" align="center" mb={6} gap={4} wrap="wrap">
+                        <Text fontSize="sm" color="slate.400">
+                            共 {total} 筆
+                        </Text>
                     </Flex>
 
                     {loading && (
@@ -254,47 +231,61 @@ function CustomerProfileContent() {
 
                     {!loading && !error && (
                         <>
-                            <Box width="100%" overflowX="auto">
-                                <Table.Root size="sm" variant="line">
+                            <Box width="100%" overflowX="auto" bg="transparent">
+                                <Table.Root size="sm" variant="line" bg="transparent">
                                     <Table.Header>
-                                        <Table.Row borderColor="whiteAlpha.100">
-                                            <Table.ColumnHeader color="slate.400">Email</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">電話</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">會員等級</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">CLV 價值</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">活躍度</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">營收貢獻</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">最後購買時間</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400">註冊時間</Table.ColumnHeader>
-                                            <Table.ColumnHeader color="slate.400" textAlign="right">操作</Table.ColumnHeader>
+                                        <Table.Row bg="transparent">
+                                            {['E-mail', '電話', '會員等級', 'CLV 價值', '活動分數', '營收貢獻', '最後購買', '註冊時間', '操作'].map(
+                                                (column, index) => (
+                                                    <Table.ColumnHeader
+                                                        key={column}
+                                                        color="slate.400"
+                                                        borderColor="whiteAlpha.100"
+                                                        textAlign={index === 8 ? 'right' : 'left'}
+                                                    >
+                                                        {column}
+                                                    </Table.ColumnHeader>
+                                                )
+                                            )}
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
-                                        {customers.map((customer) => (
-                                            <Table.Row key={customer.id} borderColor="whiteAlpha.50" _hover={{ bg: "whiteAlpha.50" }}>
-                                                <Table.Cell color="slate.200">{customer.email}</Table.Cell>
-                                                <Table.Cell color="slate.300">{customer.phone}</Table.Cell>
-                                                <Table.Cell>
-                                                    <Badge colorPalette={getMembershipLevelColor(customer.membershipLevel)} variant="subtle">
-                                                        {customer.membershipLevel.toUpperCase()}
+                                        {customers.map(({ id, email, phone, membershipLevel, clvValue, activityScore, revenueContribution, lastPurchaseTime, registrationTime }) => (
+                                            <Table.Row
+                                                key={id}
+                                                bg="transparent"
+                                                _hover={{ bg: 'whiteAlpha.50' }}
+                                            >
+                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{email}</Table.Cell>
+                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{phone}</Table.Cell>
+                                                <Table.Cell borderColor="whiteAlpha.50">
+                                                    <Badge colorPalette={getMembershipLevelColor(membershipLevel)} variant="subtle">
+                                                        {membershipLevel.toUpperCase()}
                                                     </Badge>
                                                 </Table.Cell>
-                                                <Table.Cell color="slate.300">${customer.clvValue.toFixed(2)}</Table.Cell>
-                                                <Table.Cell>
-                                                    <Text color={customer.activityScore > 50 ? 'nexus.emerald' : 'orange.400'} fontWeight="medium">
-                                                        {customer.activityScore}
+                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                    ${clvValue.toFixed(2)}
+                                                </Table.Cell>
+                                                <Table.Cell borderColor="whiteAlpha.50">
+                                                    <Text
+                                                        color={activityScore > 50 ? 'nexus.emerald' : 'orange.400'}
+                                                        fontWeight="medium"
+                                                    >
+                                                        {activityScore}
                                                     </Text>
                                                 </Table.Cell>
-                                                <Table.Cell color="slate.300">${customer.revenueContribution.toFixed(2)}</Table.Cell>
-                                                <Table.Cell color="slate.400">{formatDate(customer.lastPurchaseTime)}</Table.Cell>
-                                                <Table.Cell color="slate.400">{formatDate(customer.registrationTime)}</Table.Cell>
-                                                <Table.Cell textAlign="right">
+                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                    ${revenueContribution.toFixed(2)}
+                                                </Table.Cell>
+                                                <Table.Cell color="slate.400" borderColor="whiteAlpha.50">{formatDate(lastPurchaseTime)}</Table.Cell>
+                                                <Table.Cell color="slate.400" borderColor="whiteAlpha.50">{formatDate(registrationTime)}</Table.Cell>
+                                                <Table.Cell textAlign="right" borderColor="whiteAlpha.50">
                                                     <Button
                                                         size="sm"
                                                         variant="nexusOutline"
-                                                        onClick={() => navigate(`/customer-detail/${customer.id}`)}
+                                                        onClick={() => navigate(`/customer-detail/${id}`)}
                                                     >
-                                                        查看詳細資料
+                                                        查看詳情
                                                     </Button>
                                                 </Table.Cell>
                                             </Table.Row>
@@ -303,11 +294,51 @@ function CustomerProfileContent() {
                                 </Table.Root>
                             </Box>
 
-                            {totalPages > 1 && renderPagination()}
+                            {totalPages > 1 && (
+                                <Pagination.Root
+                                    count={total}
+                                    pageSize={limit}
+                                    page={page}
+                                    siblingCount={1}
+                                    onPageChange={(details) => handlePageChange(details.page)}
+                                >
+                                    <Flex justify="center" align="center" gap={2} mt={6} wrap="wrap">
+                                        <Pagination.PrevTrigger asChild>
+                                            <Button size="sm" variant="nexusOutline">
+                                                上一頁
+                                            </Button>
+                                        </Pagination.PrevTrigger>
+
+                                        <HStack gap={2} display={{ base: 'none', md: 'flex' }}>
+                                            <Pagination.Items
+                                                render={(item) => (
+                                                    <Button
+                                                        size="sm"
+                                                        variant={item.value === page ? 'nexusPrimary' : 'nexusOutline'}
+                                                    >
+                                                        {item.value}
+                                                    </Button>
+                                                )}
+                                                ellipsis={<Box as="span" px={2} color="slate.500">...</Box>}
+                                            />
+                                        </HStack>
+
+                                        <Box display={{ base: 'flex', md: 'none' }} alignItems="center">
+                                            <Pagination.PageText format="compact" color="slate.400" fontSize="sm" />
+                                        </Box>
+
+                                        <Pagination.NextTrigger asChild>
+                                            <Button size="sm" variant="nexusOutline">
+                                                下一頁
+                                            </Button>
+                                        </Pagination.NextTrigger>
+                                    </Flex>
+                                </Pagination.Root>
+                            )}
 
                             <Flex justify="center" mt={6}>
                                 <Text fontSize="sm" color="slate.500">
-                                    第 {page} 頁，共 {totalPages} 頁
+                                    第 {page} 頁 / 共 {totalPages} 頁
                                 </Text>
                             </Flex>
                         </>

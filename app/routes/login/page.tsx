@@ -16,24 +16,22 @@ export default function LoginPage() {
             await login(email, password);
             navigate('/');
         } catch (err) {
-            // 錯誤已經在 store 中處理
         }
     };
 
     return (
         <Box display="flex" alignItems="center" justifyContent="center" p={4}>
-            <Card.Root maxW="md" w="full" boxShadow="cyberGlow">
-                <Card.Body p={8}>
+            <Card.Root maxW="md" w="full" variant='cyber'>
+                <Card.Body p={8} >
                     <VStack gap={6} align="stretch">
                         <Box textAlign="center" mb={4}>
                             <Heading size="lg" mb={2} color="white">
                                 歡迎回來
                             </Heading>
                             <Text color="slate.400" fontSize="base">
-                                登入您的帳戶以繼續
+                                登入您的帳號以繼續
                             </Text>
                         </Box>
-
                         {error && (
                             <Alert.Root status="error" borderRadius="crisp">
                                 <Alert.Indicator />
@@ -97,7 +95,7 @@ export default function LoginPage() {
                         </form>
 
                         <Text textAlign="center" fontSize="sm" color="slate.400" mt={6}>
-                            還沒有帳戶？{' '}
+                            還沒有帳號？{' '}
                             <Link
                                 to="/register"
                                 style={{ color: '#10B981', fontWeight: 500 }}
