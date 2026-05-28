@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
     Box,
     Flex,
@@ -9,6 +9,9 @@ import {
     HStack,
     CloseButton,
     Spinner,
+    Portal,
+    Select,
+    createListCollection,
 } from "@chakra-ui/react";
 import { useDashboardStore } from "../stores/dashboardStore";
 
@@ -28,11 +31,24 @@ export function DashboardModal() {
 
     const [name, setName] = useState("");
     const [selectedSource, setSelectedSource] = useState<string>("");
-    const [chartType, setChartType] = useState<'bar' | 'pie'>('bar');
+    const [chartType, setChartType] = useState<"bar" | "pie">("bar");
+
+    const dataSourceCollection = useMemo(
+        () =>
+            createListCollection({
+                items: dataSources.map((source) => ({
+                    label: source.name,
+                    value: source.id,
+                })),
+                itemToValue: (item) => item.value,
+                itemToString: (item) => item.label,
+            }),
+        [dataSources],
+    );
 
     // 判斷是否為編輯模式
     const isEditing = !!editingPanelId;
-    const editingPanel = isEditing ? panels.find(p => p.id === editingPanelId) : null;
+    const editingPanel = isEditing ? panels.find((p) => p.id === editingPanelId) : null;
 
     // 組件載入時獲取數據源，並載入編輯數據
     useEffect(() => {
@@ -48,7 +64,7 @@ export function DashboardModal() {
                 // 新增模式，重置表單
                 setName("");
                 setSelectedSource("");
-                setChartType('bar');
+                setChartType("bar");
             }
         }
     }, [isModalOpen, fetchDataSources, editingPanel]);
@@ -62,8 +78,8 @@ export function DashboardModal() {
         if (!name || !selectedSource) return;
 
         // 自動選擇欄位
-        const numericFields = allFields.filter(f => f.type === 'number');
-        const stringFields = allFields.filter(f => f.type === 'string' || f.type === 'date');
+        const numericFields = allFields.filter((f) => f.type === "number");
+        const stringFields = allFields.filter((f) => f.type === "string" || f.type === "date");
 
         const panelData = {
             name,
@@ -71,8 +87,8 @@ export function DashboardModal() {
             chartConfig: {
                 type: chartType,
                 // 長條圖：自動選擇第一個 string/date 欄位作為 X 軸，第一個 number 欄位作為 Y 軸
-                xAxis: chartType === 'bar' ? (stringFields[0]?.name || allFields[0]?.name) : undefined,
-                yAxis: chartType === 'bar' ? (numericFields[0]?.name || allFields[1]?.name) : undefined,
+                xAxis: chartType === "bar" ? stringFields[0]?.name || allFields[0]?.name : undefined,
+                yAxis: chartType === "bar" ? numericFields[0]?.name || allFields[1]?.name : undefined,
             },
         };
 
@@ -85,10 +101,6 @@ export function DashboardModal() {
         }
 
         closeModal();
-    };
-
-    const handleSourceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedSource(e.target.value);
     };
 
     if (!isModalOpen) return null;
@@ -129,7 +141,7 @@ export function DashboardModal() {
                     borderColor="whiteAlpha.100"
                 >
                     <Text fontSize="lg" fontWeight="semibold" color="white">
-                        {isEditing ? '編輯面板' : '新增面板'}
+                        {isEditing ? "編輯面板" : "新增面板"}
                     </Text>
                     <CloseButton onClick={closeModal} color="slate.400" _hover={{ color: "white" }} />
                 </Flex>
@@ -149,7 +161,10 @@ export function DashboardModal() {
                             borderColor="whiteAlpha.200"
                             bg="nexus.obsidian"
                             color="white"
-                            _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
+                            _focus={{
+                                borderColor: "nexus.emerald",
+                                boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)",
+                            }}
                         />
                     </Box>
 
@@ -164,50 +179,60 @@ export function DashboardModal() {
                             </Flex>
                         ) : (
                             <>
-                                <Box position="relative" w="full">
-                                    <select
-                                        value={selectedSource}
-                                        onChange={handleSourceChange}
-                                        style={{
-                                            width: '100%',
-                                            padding: '8px 12px',
-                                            borderRadius: '12px',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                                            fontSize: '14px',
-                                            backgroundColor: '#070913',
-                                            color: '#ffffff',
-                                            cursor: 'pointer',
-                                            outline: 'none',
-                                        }}
-                                        onFocus={(e) => {
-                                            e.target.style.borderColor = '#10B981';
-                                            e.target.style.boxShadow = '0 0 0 1px #10B981';
-                                        }}
-                                        onBlur={(e) => {
-                                            e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                            e.target.style.boxShadow = 'none';
-                                        }}
-                                    >
-                                        <option value="" style={{ backgroundColor: '#101424' }}>請選擇數據來源</option>
-                                        {dataSources.map((source) => (
-                                            <option key={source.id} value={source.id} style={{ backgroundColor: '#101424' }}>
-                                                {source.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </Box>
+                                <Select.Root
+                                    collection={dataSourceCollection}
+                                    disabled={isLoading}
+                                    value={selectedSource ? [selectedSource] : []}
+                                    onValueChange={({ value }) => setSelectedSource(value[0] ?? "")}
+                                >
+                                    <Select.HiddenSelect />
+                                    <Select.Control>
+                                        <Select.Trigger>
+                                            <Select.ValueText placeholder="請選擇數據來源" />
+                                        </Select.Trigger>
+                                        <Select.IndicatorGroup>
+                                            <Select.Indicator />
+                                        </Select.IndicatorGroup>
+                                    </Select.Control>
+                                    <Portal>
+                                        <Select.Positioner>
+                                            <Select.Content>
+                                                {dataSourceCollection.items.map((source) => (
+                                                    <Select.Item item={source} key={source.value}>
+                                                        <Select.ItemText>{source.label}</Select.ItemText>
+                                                        <Select.ItemIndicator />
+                                                    </Select.Item>
+                                                ))}
+                                            </Select.Content>
+                                        </Select.Positioner>
+                                    </Portal>
+                                </Select.Root>
                                 {/* 顯示選中數據源的資料預覽 */}
                                 {selectedDataSource && (
-                                    <Box mt={3} p={3} bg="nexus.obsidian" border="1px solid" borderColor="whiteAlpha.100" borderRadius="crisp" fontSize="sm">
-                                        <Text fontSize="xs" color="slate.400" mb={2}>資料預覽：</Text>
+                                    <Box
+                                        mt={3}
+                                        p={3}
+                                        bg="nexus.obsidian"
+                                        border="1px solid"
+                                        borderColor="whiteAlpha.100"
+                                        borderRadius="crisp"
+                                        fontSize="sm"
+                                    >
+                                        <Text fontSize="xs" color="slate.400" mb={2}>
+                                            資料預覽：
+                                        </Text>
                                         <VStack align="start" gap={1}>
                                             {selectedDataSource.data.slice(0, 3).map((record, idx) => (
                                                 <Text key={idx} color="slate.300" fontSize="xs">
-                                                    {selectedDataSource.fields.map(f => `${f.label}: ${record[f.name]}`).join(', ')}
+                                                    {selectedDataSource.fields
+                                                        .map((f) => `${f.label}: ${record[f.name]}`)
+                                                        .join(", ")}
                                                 </Text>
                                             ))}
                                             {selectedDataSource.data.length > 3 && (
-                                                <Text color="slate.500" fontSize="xs">...共 {selectedDataSource.data.length} 筆資料</Text>
+                                                <Text color="slate.500" fontSize="xs">
+                                                    ...共 {selectedDataSource.data.length} 筆資料
+                                                </Text>
                                             )}
                                         </VStack>
                                     </Box>
@@ -223,15 +248,15 @@ export function DashboardModal() {
                         </Text>
                         <HStack gap={6}>
                             <Button
-                                variant={chartType === 'bar' ? 'nexusPrimary' : 'nexusOutline'}
-                                onClick={() => setChartType('bar')}
+                                variant={chartType === "bar" ? "nexusPrimary" : "nexusOutline"}
+                                onClick={() => setChartType("bar")}
                                 size="sm"
                             >
                                 長條圖
                             </Button>
                             <Button
-                                variant={chartType === 'pie' ? 'nexusPrimary' : 'nexusOutline'}
-                                onClick={() => setChartType('pie')}
+                                variant={chartType === "pie" ? "nexusPrimary" : "nexusOutline"}
+                                onClick={() => setChartType("pie")}
                                 size="sm"
                             >
                                 圓餅圖
@@ -241,26 +266,12 @@ export function DashboardModal() {
                 </VStack>
 
                 {/* Footer */}
-                <Flex
-                    gap={3}
-                    justify="flex-end"
-                    px={6}
-                    py={4}
-                    borderTopWidth="1px"
-                    borderColor="whiteAlpha.100"
-                >
-                    <Button
-                        variant="nexusOutline"
-                        onClick={closeModal}
-                    >
+                <Flex gap={3} justify="flex-end" px={6} py={4} borderTopWidth="1px" borderColor="whiteAlpha.100">
+                    <Button variant="nexusOutline" onClick={closeModal}>
                         取消
                     </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="nexusPrimary"
-                        disabled={!name || !selectedSource}
-                    >
-                        {isEditing ? '更新' : '建立'}
+                    <Button onClick={handleSubmit} variant="nexusPrimary" disabled={!name || !selectedSource}>
+                        {isEditing ? "更新" : "建立"}
                     </Button>
                 </Flex>
             </Box>

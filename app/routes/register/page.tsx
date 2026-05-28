@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
     return (
         <Box display="flex" alignItems="center" justifyContent="center" p={4}>
-            <Card.Root maxW="md" w="full" boxShadow="cyberGlow">
+            <Card.Root maxW="md" w="full" variant="cyber">
                 <Card.Body p={8}>
                     <VStack gap={6} align="stretch">
                         <Box textAlign="center" mb={4}>
@@ -41,7 +41,7 @@ export default function RegisterPage() {
                         </Box>
 
                         {error && (
-                            <Alert.Root status="error" borderRadius="crisp">
+                            <Alert.Root status="error">
                                 <Alert.Indicator />
                                 <Alert.Content>
                                     <Alert.Title>註冊失敗</Alert.Title>
@@ -61,11 +61,6 @@ export default function RegisterPage() {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         size="lg"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                         disabled={isLoading}
                                     />
                                 </Field.Root>
@@ -79,11 +74,6 @@ export default function RegisterPage() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         size="lg"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                         disabled={isLoading}
                                     />
                                 </Field.Root>
@@ -97,11 +87,6 @@ export default function RegisterPage() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         size="lg"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                         disabled={isLoading}
                                     />
                                 </Field.Root>
@@ -115,11 +100,6 @@ export default function RegisterPage() {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         size="lg"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: "nexus.emerald", boxShadow: "0 0 0 1px var(--chakra-colors-nexus-emerald)" }}
                                         disabled={isLoading}
                                     />
                                     {password !== confirmPassword && confirmPassword.length > 0 && (

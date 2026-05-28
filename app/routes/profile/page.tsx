@@ -12,10 +12,20 @@ import {
     HStack,
     Field,
     Icon,
+    Select,
+    createListCollection,
 } from '@chakra-ui/react';
 import { useAuthStore } from '~/stores/authStore';
 
 type Gender = 'male' | 'female' | 'other';
+
+const genderOptions = createListCollection({
+    items: [
+        { label: '男', value: 'male' },
+        { label: '女', value: 'female' },
+        { label: '其他', value: 'other' },
+    ],
+});
 
 export default function ProfilePage() {
     const { user, updateUserProfile, logout, error, clearError } = useAuthStore();
@@ -96,7 +106,7 @@ export default function ProfilePage() {
                 <Card.Body p={8}>
                     <VStack gap={6} align="stretch">
                         {success && (
-                            <Alert.Root status="success" borderRadius="crisp">
+                            <Alert.Root status="success">
                                 <Alert.Indicator />
                                 <Alert.Content>
                                     <Alert.Title>更新成功</Alert.Title>
@@ -106,7 +116,7 @@ export default function ProfilePage() {
                         )}
 
                         {(error || formError) && (
-                            <Alert.Root status="error" borderRadius="crisp">
+                            <Alert.Root status="error">
                                 <Alert.Indicator />
                                 <Alert.Content>
                                     <Alert.Title>更新失敗</Alert.Title>
@@ -124,10 +134,7 @@ export default function ProfilePage() {
                                         <Field.Label color="slate.400">Email（不可修改）</Field.Label>
                                         <Input
                                             value={user.email}
-                                            borderRadius="crisp"
-                                            borderColor="whiteAlpha.100"
-                                            bg="nexus.obsidian"
-                                            color="slate.400"
+                                            disabled
                                         />
                                     </Field.Root>
 
@@ -135,10 +142,7 @@ export default function ProfilePage() {
                                         <Field.Label color="slate.400">會員等級</Field.Label>
                                         <Input
                                             value={(user.membershipLevel ?? 'bronze').toUpperCase()}
-                                            borderRadius="crisp"
-                                            borderColor="whiteAlpha.100"
-                                            bg="nexus.obsidian"
-                                            color="slate.400"
+                                            disabled
                                         />
                                     </Field.Root>
                                 </HStack>
@@ -151,11 +155,6 @@ export default function ProfilePage() {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="請輸入姓名"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: 'nexus.emerald', boxShadow: '0 0 0 1px var(--chakra-colors-nexus-emerald)' }}
                                         disabled={loading}
                                     />
                                 </Field.Root>
@@ -166,11 +165,6 @@ export default function ProfilePage() {
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
                                         placeholder="請輸入電話號碼"
-                                        borderRadius="crisp"
-                                        borderColor="whiteAlpha.200"
-                                        bg="nexus.obsidian"
-                                        color="white"
-                                        _focus={{ borderColor: 'nexus.emerald', boxShadow: '0 0 0 1px var(--chakra-colors-nexus-emerald)' }}
                                         disabled={loading}
                                     />
                                 </Field.Root>
@@ -178,36 +172,32 @@ export default function ProfilePage() {
                                 <HStack gap={4} width="full" align="start">
                                     <Field.Root>
                                         <Field.Label color="slate.300">性別</Field.Label>
-                                        <Box position="relative" w="full">
-                                            <select
-                                                value={gender}
-                                                onChange={(e) => setGender(e.target.value as Gender)}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '8px 12px',
-                                                    borderRadius: '8px',
-                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                    fontSize: '14px',
-                                                    backgroundColor: '#070913',
-                                                    color: '#ffffff',
-                                                    cursor: 'pointer',
-                                                    outline: 'none',
-                                                }}
-                                                onFocus={(e) => {
-                                                    e.target.style.borderColor = '#10B981';
-                                                    e.target.style.boxShadow = '0 0 0 1px #10B981';
-                                                }}
-                                                onBlur={(e) => {
-                                                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                                    e.target.style.boxShadow = 'none';
-                                                }}
-                                                disabled={loading}
-                                            >
-                                                <option value="male" style={{ backgroundColor: '#101424' }}>男</option>
-                                                <option value="female" style={{ backgroundColor: '#101424' }}>女</option>
-                                                <option value="other" style={{ backgroundColor: '#101424' }}>其他</option>
-                                            </select>
-                                        </Box>
+                                        <Select.Root
+                                            collection={genderOptions}
+                                            disabled={loading}
+                                            value={[gender]}
+                                            onValueChange={({ value }) => setGender(value[0] as Gender)}
+                                        >
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger>
+                                                    <Select.ValueText placeholder="請選擇性別" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {genderOptions.items.map((item) => (
+                                                        <Select.Item item={item} key={item.value}>
+                                                            <Select.ItemText>{item.label}</Select.ItemText>
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
                                     </Field.Root>
 
                                     <Field.Root>
@@ -216,11 +206,6 @@ export default function ProfilePage() {
                                             type="date"
                                             value={birthday}
                                             onChange={(e) => setBirthday(e.target.value)}
-                                            borderRadius="crisp"
-                                            borderColor="whiteAlpha.200"
-                                            bg="nexus.obsidian"
-                                            color="white"
-                                            _focus={{ borderColor: 'nexus.emerald', boxShadow: '0 0 0 1px var(--chakra-colors-nexus-emerald)' }}
                                             disabled={loading}
                                         />
                                     </Field.Root>

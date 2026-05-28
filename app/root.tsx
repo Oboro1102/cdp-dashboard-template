@@ -9,7 +9,7 @@
   useNavigate,
 } from "react-router";
 import type { Route } from "./+types/root";
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { system } from './chakraTheme';
 import { useAuthStore } from "./stores/authStore";
 import { useEffect, lazy, Suspense } from "react";

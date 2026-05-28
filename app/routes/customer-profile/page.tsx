@@ -75,7 +75,7 @@ function CustomerProfileContent() {
             const response = await fetch(`/api/customers?page=${page}&limit=${limit}`);
 
             if (!response.ok) {
-                throw new Error('無法取得客戶資料');
+                throw new Error('無法載入客戶資料');
             }
 
             const result: CustomerListResponse | Customer[] = await response.json();
@@ -85,7 +85,7 @@ function CustomerProfileContent() {
             setTotal(Array.isArray(result) ? data.length : result.total || 0);
             setTotalPages(Array.isArray(result) ? Math.ceil(data.length / limit) : result.totalPages || 0);
         } catch (err) {
-            setError(err instanceof Error ? err.message : '發生未知錯誤');
+            setError(err instanceof Error ? err.message : '載入失敗');
         } finally {
             setLoading(false);
         }
@@ -141,9 +141,9 @@ function CustomerProfileContent() {
         <Box width="100%">
             <Box mb={6}>
                 <Heading size="lg" mb={2} color="white">
-                    客戶資料
+                    客戶管理
                 </Heading>
-                <Text color="slate.400">檢視與管理客戶清單</Text>
+                <Text color="slate.400">查看與管理客戶資料。</Text>
             </Box>
 
             <Card.Root>
@@ -157,48 +157,21 @@ function CustomerProfileContent() {
                         onValueChange={(details) => handleLimitChange(details.value[0] ?? '10')}
                     >
                         <Select.HiddenSelect />
-                        <Select.Label color="slate.400" fontSize="sm" mb={2}>
-                            每頁顯示
-                        </Select.Label>
+                        <Select.Label>顯示筆數</Select.Label>
                         <Select.Control>
-                            <Select.Trigger
-                                bg="nexus.obsidian"
-                                color="white"
-                                border="1px solid"
-                                borderColor="whiteAlpha.200"
-                                borderRadius="crisp"
-                                _hover={{ borderColor: 'whiteAlpha.300', bg: 'nexus.slate' }}
-                                _focusVisible={{
-                                    borderColor: 'nexus.emerald',
-                                    boxShadow: '0 0 0 1px var(--chakra-colors-nexus-emerald)',
-                                }}
-                            >
-                                <Select.ValueText placeholder="請選擇筆數" color="slate.200" />
+                            <Select.Trigger>
+                                <Select.ValueText placeholder="請選擇筆數" />
                             </Select.Trigger>
-                            <Select.IndicatorGroup color="slate.400">
-                                <Select.Indicator color="slate.400" />
+                            <Select.IndicatorGroup>
+                                <Select.Indicator />
                             </Select.IndicatorGroup>
                         </Select.Control>
                         <Portal>
                             <Select.Positioner>
-                                <Select.Content
-                                    bg="nexus.slate"
-                                    border="1px solid"
-                                    borderColor="whiteAlpha.200"
-                                    borderRadius="crisp"
-                                    boxShadow="cyberGlow"
-                                    p={1}
-                                >
+                                <Select.Content>
                                     {pageSizeOptions.items.map((item) => (
-                                        <Select.Item
-                                            item={item}
-                                            key={item.value}
-                                            color="slate.200"
-                                            borderRadius="10px"
-                                            _highlighted={{ bg: 'whiteAlpha.100', color: 'white' }}
-                                            _selected={{ bg: 'nexus.emeraldAlpha', color: 'nexus.emerald' }}
-                                        >
-                                            {item.label}
+                                        <Select.Item item={item} key={item.value}>
+                                            <Select.ItemText>{item.label}</Select.ItemText>
                                             <Select.ItemIndicator />
                                         </Select.Item>
                                     ))}
@@ -235,61 +208,82 @@ function CustomerProfileContent() {
                                 <Table.Root size="sm" variant="line" bg="transparent">
                                     <Table.Header>
                                         <Table.Row bg="transparent">
-                                            {['E-mail', '電話', '會員等級', 'CLV 價值', '活動分數', '營收貢獻', '最後購買', '註冊時間', '操作'].map(
-                                                (column, index) => (
-                                                    <Table.ColumnHeader
-                                                        key={column}
-                                                        color="slate.400"
-                                                        borderColor="whiteAlpha.100"
-                                                        textAlign={index === 8 ? 'right' : 'left'}
-                                                    >
-                                                        {column}
-                                                    </Table.ColumnHeader>
-                                                )
-                                            )}
+                                            {[
+                                                'E-mail',
+                                                '電話',
+                                                '會員等級',
+                                                'CLV',
+                                                '活動分數',
+                                                '營收貢獻',
+                                                '最後購買',
+                                                '註冊時間',
+                                                '操作',
+                                            ].map((column, index) => (
+                                                <Table.ColumnHeader
+                                                    key={column}
+                                                    color="slate.400"
+                                                    borderColor="whiteAlpha.100"
+                                                    textAlign={index === 8 ? 'right' : 'left'}
+                                                >
+                                                    {column}
+                                                </Table.ColumnHeader>
+                                            ))}
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
-                                        {customers.map(({ id, email, phone, membershipLevel, clvValue, activityScore, revenueContribution, lastPurchaseTime, registrationTime }) => (
-                                            <Table.Row
-                                                key={id}
-                                                bg="transparent"
-                                                _hover={{ bg: 'whiteAlpha.50' }}
-                                            >
-                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{email}</Table.Cell>
-                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">{phone}</Table.Cell>
-                                                <Table.Cell borderColor="whiteAlpha.50">
-                                                    <Badge colorPalette={getMembershipLevelColor(membershipLevel)} variant="subtle">
-                                                        {membershipLevel.toUpperCase()}
-                                                    </Badge>
-                                                </Table.Cell>
-                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
-                                                    ${clvValue.toFixed(2)}
-                                                </Table.Cell>
-                                                <Table.Cell borderColor="whiteAlpha.50">
-                                                    <Text
-                                                        color={activityScore > 50 ? 'nexus.emerald' : 'orange.400'}
-                                                        fontWeight="medium"
-                                                    >
-                                                        {activityScore}
-                                                    </Text>
-                                                </Table.Cell>
-                                                <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
-                                                    ${revenueContribution.toFixed(2)}
-                                                </Table.Cell>
-                                                <Table.Cell color="slate.400" borderColor="whiteAlpha.50">{formatDate(lastPurchaseTime)}</Table.Cell>
-                                                <Table.Cell color="slate.400" borderColor="whiteAlpha.50">{formatDate(registrationTime)}</Table.Cell>
-                                                <Table.Cell textAlign="right" borderColor="whiteAlpha.50">
-                                                    <Button
-                                                        size="sm"
-                                                        variant="nexusOutline"
-                                                        onClick={() => navigate(`/customer-detail/${id}`)}
-                                                    >
-                                                        查看詳情
-                                                    </Button>
-                                                </Table.Cell>
-                                            </Table.Row>
-                                        ))}
+                                        {customers.map(
+                                            ({
+                                                id,
+                                                email,
+                                                phone,
+                                                membershipLevel,
+                                                clvValue,
+                                                activityScore,
+                                                revenueContribution,
+                                                lastPurchaseTime,
+                                                registrationTime,
+                                            }) => (
+                                                <Table.Row key={id} bg="transparent" _hover={{ bg: 'whiteAlpha.50' }}>
+                                                    <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                        {email}
+                                                    </Table.Cell>
+                                                    <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                        {phone}
+                                                    </Table.Cell>
+                                                    <Table.Cell borderColor="whiteAlpha.50">
+                                                        <Badge colorPalette={getMembershipLevelColor(membershipLevel)} variant="subtle">
+                                                            {membershipLevel.toUpperCase()}
+                                                        </Badge>
+                                                    </Table.Cell>
+                                                    <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                        ${clvValue.toFixed(2)}
+                                                    </Table.Cell>
+                                                    <Table.Cell borderColor="whiteAlpha.50">
+                                                        <Text color={activityScore > 50 ? 'nexus.emerald' : 'orange.400'} fontWeight="medium">
+                                                            {activityScore}
+                                                        </Text>
+                                                    </Table.Cell>
+                                                    <Table.Cell color="slate.300" borderColor="whiteAlpha.50">
+                                                        ${revenueContribution.toFixed(2)}
+                                                    </Table.Cell>
+                                                    <Table.Cell color="slate.400" borderColor="whiteAlpha.50">
+                                                        {formatDate(lastPurchaseTime)}
+                                                    </Table.Cell>
+                                                    <Table.Cell color="slate.400" borderColor="whiteAlpha.50">
+                                                        {formatDate(registrationTime)}
+                                                    </Table.Cell>
+                                                    <Table.Cell textAlign="right" borderColor="whiteAlpha.50">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="nexusOutline"
+                                                            onClick={() => navigate(`/customer-detail/${id}`)}
+                                                        >
+                                                            查看詳情
+                                                        </Button>
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            ),
+                                        )}
                                     </Table.Body>
                                 </Table.Root>
                             </Box>

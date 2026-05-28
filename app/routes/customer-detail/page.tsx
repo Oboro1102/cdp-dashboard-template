@@ -13,11 +13,6 @@ import {
     Icon,
     Table,
     Drawer,
-
-    DrawerContent,
-    DrawerHeader,
-    DrawerBody,
-    DrawerFooter,
     SimpleGrid,
     VStack,
     useDisclosure,
@@ -381,7 +376,7 @@ export default function CustomerDetailPage() {
             <Drawer.Root open={isDrawerOpen} onOpenChange={(e) => { if (!e.open) closeDrawer(); }}>
                 <Portal>
                     <Drawer.Backdrop bg="blackAlpha.800" backdropFilter="blur(4px)" />
-                    <DrawerContent
+                    <Drawer.Content
                         position="fixed"
                         top="0"
                         right="0"
@@ -396,11 +391,11 @@ export default function CustomerDetailPage() {
                         display="flex"
                         flexDirection="column"
                     >
-                        <DrawerHeader p={0} mb={6} borderBottomWidth="1px" borderColor="whiteAlpha.100" pb={4}>
+                        <Drawer.Header p={0} mb={6} borderBottomWidth="1px" borderColor="whiteAlpha.100" pb={4}>
                             <Heading size="lg" color="white">訂單明細</Heading>
-                        </DrawerHeader>
+                        </Drawer.Header>
 
-                        <DrawerBody p={0} flex={1} overflowY="auto">
+                        <Drawer.Body p={0} flex={1} overflowY="auto">
                             {selectedPurchase && (
                                 <>
                                     <SimpleGrid columns={2} gap={4} mb={6}>
@@ -449,12 +444,12 @@ export default function CustomerDetailPage() {
                                     </Box>
                                 </>
                             )}
-                        </DrawerBody>
+                        </Drawer.Body>
 
-                        <DrawerFooter p={0} mt={6} pt={4} borderTopWidth="1px" borderColor="whiteAlpha.100" display="flex" justifyContent="flex-end">
+                        <Drawer.Footer p={0} mt={6} pt={4} borderTopWidth="1px" borderColor="whiteAlpha.100" display="flex" justifyContent="flex-end">
                             <Button onClick={closeDrawer} variant="nexusOutline">關閉</Button>
-                        </DrawerFooter>
-                    </DrawerContent>
+                        </Drawer.Footer>
+                    </Drawer.Content>
                 </Portal>
             </Drawer.Root>
         </Box>
