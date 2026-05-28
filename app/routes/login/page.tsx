@@ -1,112 +1,139 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router';
-import { Box, Card, Heading, Text, Input, Button, Alert, VStack, Field } from '@chakra-ui/react';
-import { useAuthStore } from '~/stores/authStore';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { Alert, Box, Button, Card, Field, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import { useAuthStore } from "~/stores/authStore";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('test@example.com');
-    const [password, setPassword] = useState('password123');
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("test@example.com");
+  const [password, setPassword] = useState("password123");
+  const navigate = useNavigate();
+  const { login, isLoading, error, clearError } = useAuthStore();
 
-    const { login, isLoading, error, clearError } = useAuthStore();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            await login(email, password);
-            navigate('/');
-        } catch (err) {
-        }
-    };
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch {
+      // Store already exposes the error message.
+    }
+  };
 
-    return (
-        <Box display="flex" alignItems="center" justifyContent="center" p={4}>
-            <Card.Root maxW="md" w="full" variant="cyber">
-                <Card.Body p={8} >
-                    <VStack gap={6} align="stretch">
-                        <Box textAlign="center" mb={4}>
-                            <Heading size="lg" mb={2} color="white">
-                                歡迎回來
-                            </Heading>
-                            <Text color="slate.400" fontSize="base">
-                                登入您的帳號以繼續
-                            </Text>
-                        </Box>
-                        {error && (
-                            <Alert.Root status="error">
-                                <Alert.Indicator />
-                                <Alert.Content>
-                                    <Alert.Title>登入失敗</Alert.Title>
-                                    <Alert.Description>{error}</Alert.Description>
-                                </Alert.Content>
-                                <Button size="sm" ml="auto" variant="ghost" color="slate.400" _hover={{ color: "white" }} onClick={clearError}>✕</Button>
-                            </Alert.Root>
-                        )}
+  return (
+    <Flex minH="100dvh" align="center" justify="center" px={4} py={8}>
+      <Box w="full" maxW="1100px">
+        <Card.Root
+          overflow="hidden"
+          borderRadius="shell"
+          borderWidth="1px"
+          borderColor="nexus.lineSoft"
+          bg="nexus.surfaceCard"
+          boxShadow="panel"
+          backdropFilter="blur(20px)"
+        >
+          <Flex direction={{ base: "column", lg: "row" }}>
+            <Box flex="1" p={{ base: 8, lg: 10 }}>
+              <Stack gap={6}>
+                <Stack gap={2}>
+                  <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
+                    登入
+                  </Heading>
+                  <Text color="nexus.textMuted">使用測試帳號即可登入</Text>
+                </Stack>
 
-                        <form onSubmit={handleLogin}>
-                            <VStack gap={6}>
-                                <Field.Root required>
-                                    <Field.Label color="slate.300">電子郵件</Field.Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="請輸入電子郵件"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        size="lg"
-                                        disabled={isLoading}
-                                    />
-                                </Field.Root>
+                {error && (
+                  <Alert.Root status="error" borderRadius="crisp">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Title>登入失敗</Alert.Title>
+                      <Alert.Description>{error}</Alert.Description>
+                    </Alert.Content>
+                    <Button size="sm" variant="ghost" color="nexus.textMuted" onClick={clearError}>
+                      關閉
+                    </Button>
+                  </Alert.Root>
+                )}
 
-                                <Field.Root required>
-                                    <Field.Label color="slate.300">密碼</Field.Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="請輸入密碼"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        size="lg"
-                                        disabled={isLoading}
-                                    />
-                                </Field.Root>
+                <Box as="form" onSubmit={handleLogin}>
+                  <Stack gap={5}>
+                    <Field.Root required>
+                      <Field.Label color="nexus.textMuted">Email</Field.Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        size="lg"
+                        disabled={isLoading}
+                      />
+                    </Field.Root>
 
-                                <Button
-                                    type="submit"
-                                    variant="nexusPrimary"
-                                    size="lg"
-                                    w="full"
-                                    loading={isLoading}
-                                    loadingText="登入中..."
-                                >
-                                    登入
-                                </Button>
-                            </VStack>
-                        </form>
+                    <Field.Root required>
+                      <Field.Label color="nexus.textMuted">密碼</Field.Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="請輸入密碼"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        size="lg"
+                        disabled={isLoading}
+                      />
+                    </Field.Root>
 
-                        <Text textAlign="center" fontSize="sm" color="slate.400" mt={6}>
-                            還沒有帳號？{' '}
-                            <Link
-                                to="/register"
-                                style={{ color: '#10B981', fontWeight: 500 }}
-                                onMouseEnter={(e) => (e.currentTarget.style.color = '#059669')}
-                                onMouseLeave={(e) => (e.currentTarget.style.color = '#10B981')}
-                            >
-                                立即註冊
-                            </Link>
-                            {' | '}
-                            <Link
-                                to="/forgot-password"
-                                style={{ color: '#10B981', fontWeight: 500 }}
-                                onMouseEnter={(e) => (e.currentTarget.style.color = '#059669')}
-                                onMouseLeave={(e) => (e.currentTarget.style.color = '#10B981')}
-                            >
-                                忘記密碼
-                            </Link>
-                        </Text>
-                    </VStack>
-                </Card.Body>
-            </Card.Root>
-        </Box>
-    );
+                    <Button type="submit" variant="nexusPrimary" size="lg" w="full" loading={isLoading} loadingText="登入中">
+                      登入
+                    </Button>
+                  </Stack>
+                </Box>
+
+                <Flex
+                  justify="center"
+                  align={{ base: "start", sm: "center" }}
+                  direction={{ base: "column", sm: "row" }}
+                  gap={3}
+                  pt={2}
+                  color="nexus.textMuted"
+                  fontSize="sm"
+                >
+                  <Text>
+                    還沒有帳號？
+                    <Link to="/register" style={{ color: "#E8A84D", fontWeight: 600, marginLeft: 6 }}>
+                      立即註冊
+                    </Link>
+                  </Text>
+                  <Link to="/forgot-password" style={{ color: "#E8A84D", fontWeight: 600 }}>
+                    忘記密碼
+                  </Link>
+                </Flex>
+              </Stack>
+            </Box>
+          </Flex>
+        </Card.Root>
+      </Box>
+    </Flex>
+  );
+}
+
+function BadgeLike() {
+  return (
+    <Box
+      w="fit-content"
+      px={3}
+      py={1}
+      borderRadius="pill"
+      borderWidth="1px"
+      borderColor="nexus.amberAlpha"
+      bg="nexus.amberAlpha"
+      color="nexus.amberLight"
+      fontSize="xs"
+      fontWeight="semibold"
+      letterSpacing="0.14em"
+      textTransform="uppercase"
+    >
+      Aurum Night
+    </Box>
+  );
 }

@@ -10,14 +10,22 @@ html,
 body {
   min-height: 100%;
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(20, 184, 166, 0.12), transparent 24%),
-    linear-gradient(180deg, #050816 0%, #030212 100%);
-  color: #e2e8f0;
+    radial-gradient(circle at 14% 0%, rgba(216, 138, 26, 0.18), transparent 28%),
+    radial-gradient(circle at 86% 8%, rgba(232, 168, 77, 0.1), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(8, 15, 30, 0.55), transparent 40%),
+    linear-gradient(180deg, var(--aurum-bg0, #060913) 0%, var(--aurum-bg1, #0a1020) 46%, #02040b 100%);
+  color: var(--aurum-text, #e5e7eb);
   color-scheme: dark;
 }
 
 body {
   margin: 0;
   font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--aurum-bg0, #060913);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(216, 138, 26, 0.28);
+  color: #fff8ed;
 }

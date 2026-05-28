@@ -1,179 +1,203 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router';
-import { Box, Card, Heading, Text, Input, Button, Alert, VStack, Field } from '@chakra-ui/react';
-import { useAuthStore } from '~/stores/authStore';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { Alert, Box, Button, Card, Field, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import { useAuthStore } from "~/stores/authStore";
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [step, setStep] = useState<'verify' | 'reset'>('verify');
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [step, setStep] = useState<"verify" | "reset">("verify");
+  const navigate = useNavigate();
 
-    const { resetPassword, verifyEmail, isLoading, error, clearError } = useAuthStore();
+  const { resetPassword, verifyEmail, isLoading, error, clearError } = useAuthStore();
 
-    const handleVerify = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            // 驗證帳號是否存在
-            const isValid = await verifyEmail(email);
-            if (isValid) {
-                // 帳號存在，進入重設密碼步驟
-                setStep('reset');
-            }
-        } catch (err: any) {
-            // 錯誤已經在 store 中處理
-        }
-    };
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
 
-    const handleResetPassword = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setPasswordError('');
+    try {
+      const isValid = await verifyEmail(email);
+      if (isValid) {
+        setStep("reset");
+      }
+    } catch {
+      // Store already exposes the error message.
+    }
+  };
 
-        if (newPassword !== confirmPassword) {
-            setPasswordError('新密碼與確認密碼不一致');
-            return;
-        }
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
 
-        if (newPassword.length < 6) {
-            setPasswordError('新密碼長度至少需要 6 個字元');
-            return;
-        }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("密碼與確認密碼不一致");
+      return;
+    }
 
-        try {
-            await resetPassword(email, newPassword);
-            // 重設成功，導向登入頁面
-            navigate('/login');
-        } catch (err) {
-            // 錯誤已經在 store 中處理
-        }
-    };
+    if (newPassword.length < 6) {
+      setPasswordError("密碼至少需要 6 碼");
+      return;
+    }
 
-    return (
-        <Box display="flex" alignItems="center" justifyContent="center" p={4}>
-            <Card.Root maxW="md" w="full" variant="cyber">
-                <Card.Body p={8}>
-                    <VStack gap={6} align="stretch">
-                        <Box textAlign="center" mb={4}>
-                            <Heading size="lg" mb={2} color="white">
-                                {step === 'verify' ? '忘記密碼' : '重設密碼'}
-                            </Heading>
-                            <Text color="slate.400" fontSize="base">
-                                {step === 'verify'
-                                    ? '請輸入您的電子郵件以驗證帳號'
-                                    : '請輸入新的密碼'}
-                            </Text>
-                        </Box>
+    try {
+      await resetPassword(email, newPassword);
+      navigate("/login");
+    } catch {
+      // Store already exposes the error message.
+    }
+  };
 
-                        {error && (
-                            <Alert.Root status="error">
-                                <Alert.Indicator />
-                                <Alert.Content>
-                                    <Alert.Title>錯誤</Alert.Title>
-                                    <Alert.Description>{error}</Alert.Description>
-                                </Alert.Content>
-                                <Button size="sm" ml="auto" variant="ghost" color="slate.400" _hover={{ color: "white" }} onClick={clearError}>✕</Button>
-                            </Alert.Root>
-                        )}
+  return (
+    <Flex minH="100dvh" align="center" justify="center" px={4} py={8}>
+      <Box w="full" maxW="880px">
+        <Card.Root
+          overflow="hidden"
+          borderRadius="shell"
+          borderWidth="1px"
+          borderColor="nexus.lineSoft"
+          bg="nexus.surfaceCard"
+          boxShadow="panel"
+          backdropFilter="blur(20px)"
+        >
+          <Box p={{ base: 8, lg: 10 }}>
+            <Stack gap={6}>
+              <Stack gap={2} maxW="44rem">
+                <BadgeLike />
+                <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
+                  {step === "verify" ? "驗證 Email" : "重設密碼"}
+                </Heading>
+                <Text color="nexus.textMuted" lineHeight="1.8">
+                  {step === "verify"
+                    ? "先確認 Email 是否存在，接著再建立新密碼。"
+                    : "請輸入新的密碼，完成後會直接回到登入頁。"}
+                </Text>
+              </Stack>
 
-                        {step === 'verify' ? (
-                            <form onSubmit={handleVerify}>
-                                <VStack gap={6}>
-                                    <Field.Root required>
-                                        <Field.Label color="slate.300">電子郵件</Field.Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            placeholder="請輸入電子郵件"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            size="lg"
-                                            disabled={isLoading}
-                                        />
-                                    </Field.Root>
+              {error && (
+                <Alert.Root status="error" borderRadius="crisp">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Title>操作失敗</Alert.Title>
+                    <Alert.Description>{error}</Alert.Description>
+                  </Alert.Content>
+                  <Button size="sm" variant="ghost" color="nexus.textMuted" onClick={clearError}>
+                    關閉
+                  </Button>
+                </Alert.Root>
+              )}
 
-                                    <Button
-                                        type="submit"
-                                        variant="nexusPrimary"
-                                        size="lg"
-                                        w="full"
-                                        loading={isLoading}
-                                        loadingText="驗證中..."
-                                    >
-                                        驗證帳號
-                                    </Button>
-                                </VStack>
-                            </form>
-                        ) : (
-                            <form onSubmit={handleResetPassword}>
-                                <VStack gap={6}>
-                                    <Field.Root required invalid={!!passwordError}>
-                                        <Field.Label color="slate.300">新密碼</Field.Label>
-                                        <Input
-                                            id="newPassword"
-                                            type="password"
-                                            placeholder="請輸入新密碼（至少 6 個字元）"
-                                            value={newPassword}
-                                            onChange={(e) => {
-                                                setNewPassword(e.target.value);
-                                                setPasswordError('');
-                                            }}
-                                            size="lg"
-                                            disabled={isLoading}
-                                        />
-                                        {passwordError && (
-                                            <Field.ErrorText>{passwordError}</Field.ErrorText>
-                                        )}
-                                    </Field.Root>
+              {step === "verify" ? (
+                <Box as="form" onSubmit={handleVerify}>
+                  <Stack gap={5}>
+                    <Field.Root required>
+                      <Field.Label color="nexus.textMuted">Email</Field.Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        size="lg"
+                        disabled={isLoading}
+                      />
+                    </Field.Root>
 
-                                    <Field.Root required invalid={!!passwordError}>
-                                        <Field.Label color="slate.300">確認新密碼</Field.Label>
-                                        <Input
-                                            id="confirmPassword"
-                                            type="password"
-                                            placeholder="請再次輸入新密碼"
-                                            value={confirmPassword}
-                                            onChange={(e) => {
-                                                setConfirmPassword(e.target.value);
-                                                setPasswordError('');
-                                            }}
-                                            size="lg"
-                                            disabled={isLoading}
-                                        />
-                                        {passwordError && (
-                                            <Field.ErrorText>{passwordError}</Field.ErrorText>
-                                        )}
-                                    </Field.Root>
+                    <Button
+                      type="submit"
+                      variant="nexusPrimary"
+                      size="lg"
+                      w="full"
+                      loading={isLoading}
+                      loadingText="驗證中"
+                    >
+                      驗證並繼續
+                    </Button>
+                  </Stack>
+                </Box>
+              ) : (
+                <Box as="form" onSubmit={handleResetPassword}>
+                  <Stack gap={5}>
+                    <Field.Root required invalid={!!passwordError}>
+                      <Field.Label color="nexus.textMuted">新密碼</Field.Label>
+                      <Input
+                        id="newPassword"
+                        type="password"
+                        placeholder="至少 6 碼"
+                        value={newPassword}
+                        onChange={(e) => {
+                          setNewPassword(e.target.value);
+                          setPasswordError(null);
+                        }}
+                        size="lg"
+                        disabled={isLoading}
+                      />
+                      {passwordError && <Field.ErrorText>{passwordError}</Field.ErrorText>}
+                    </Field.Root>
 
-                                    <Button
-                                        type="submit"
-                                        variant="nexusPrimary"
-                                        size="lg"
-                                        w="full"
-                                        loading={isLoading}
-                                        loadingText="重設中..."
-                                    >
-                                        重設密碼
-                                    </Button>
-                                </VStack>
-                            </form>
-                        )}
+                    <Field.Root required invalid={!!passwordError}>
+                      <Field.Label color="nexus.textMuted">確認密碼</Field.Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="再次輸入新密碼"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          setPasswordError(null);
+                        }}
+                        size="lg"
+                        disabled={isLoading}
+                      />
+                      {passwordError && <Field.ErrorText>{passwordError}</Field.ErrorText>}
+                    </Field.Root>
 
-                        <Text textAlign="center" fontSize="sm" color="slate.400" mt={6}>
-                            記起密碼了？{' '}
-                            <Link
-                                to="/login"
-                                style={{ color: '#10B981', fontWeight: 500 }}
-                                onMouseEnter={(e) => (e.currentTarget.style.color = '#059669')}
-                                onMouseLeave={(e) => (e.currentTarget.style.color = '#10B981')}
-                            >
-                                返回登入
-                            </Link>
-                        </Text>
-                    </VStack>
-                </Card.Body>
-            </Card.Root>
-        </Box>
-    );
+                    <Button
+                      type="submit"
+                      variant="nexusPrimary"
+                      size="lg"
+                      w="full"
+                      loading={isLoading}
+                      loadingText="更新中"
+                    >
+                      更新密碼
+                    </Button>
+                  </Stack>
+                </Box>
+              )}
+
+              <Text color="nexus.textMuted" fontSize="sm">
+                想起密碼了？
+                <Link to="/login" style={{ color: "#E8A84D", fontWeight: 600, marginLeft: 6 }}>
+                  回到登入
+                </Link>
+              </Text>
+            </Stack>
+          </Box>
+        </Card.Root>
+      </Box>
+    </Flex>
+  );
+}
+
+function BadgeLike() {
+  return (
+    <Box
+      w="fit-content"
+      px={3}
+      py={1}
+      borderRadius="pill"
+      borderWidth="1px"
+      borderColor="nexus.amberAlpha"
+      bg="nexus.amberAlpha"
+      color="nexus.amberLight"
+      fontSize="xs"
+      fontWeight="semibold"
+      letterSpacing="0.14em"
+      textTransform="uppercase"
+    >
+      Account Recovery
+    </Box>
+  );
 }

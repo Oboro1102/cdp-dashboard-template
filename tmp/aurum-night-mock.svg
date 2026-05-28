@@ -1,0 +1,125 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060913"/>
+      <stop offset="55%" stop-color="#0A1020"/>
+      <stop offset="100%" stop-color="#02040B"/>
+    </linearGradient>
+    <radialGradient id="orb1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(240 140) rotate(20) scale(360 300)">
+      <stop offset="0%" stop-color="#D88A1A" stop-opacity="0.34"/>
+      <stop offset="60%" stop-color="#D88A1A" stop-opacity="0.11"/>
+      <stop offset="100%" stop-color="#D88A1A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1320 160) rotate(8) scale(320 240)">
+      <stop offset="0%" stop-color="#E8A84D" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#E8A84D" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#E8A84D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1040 780) rotate(-14) scale(460 340)">
+      <stop offset="0%" stop-color="#A8650F" stop-opacity="0.18"/>
+      <stop offset="70%" stop-color="#A8650F" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#A8650F" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur20" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+    <filter id="blur40" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="26" stdDeviation="22" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#273244" stroke-opacity="0.18" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A8650F"/>
+      <stop offset="55%" stop-color="#D88A1A"/>
+      <stop offset="100%" stop-color="#E8A84D"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0F1524"/>
+      <stop offset="100%" stop-color="#0B111D"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#grid)" opacity="0.34"/>
+  <circle cx="240" cy="140" r="360" fill="url(#orb1)" filter="url(#blur40)"/>
+  <circle cx="1320" cy="160" r="320" fill="url(#orb2)" filter="url(#blur40)"/>
+  <circle cx="1040" cy="780" r="460" fill="url(#orb3)" filter="url(#blur40)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="58" width="1456" height="874" rx="34" fill="rgba(10,16,32,0.84)" stroke="#273244" stroke-opacity="0.9"/>
+    <rect x="72" y="58" width="1456" height="874" rx="34" fill="none" stroke="#D88A1A" stroke-opacity="0.12"/>
+  </g>
+
+  <g>
+    <rect x="104" y="90" width="1392" height="68" rx="999" fill="#0A1020" fill-opacity="0.82" stroke="#273244" stroke-opacity="0.8"/>
+    <g transform="translate(128 109)">
+      <rect x="0" y="0" width="30" height="30" rx="10" fill="url(#amber)"/>
+      <text x="45" y="20" fill="#E5E7EB" font-size="22" font-weight="700" font-family="Arial, sans-serif">CDP</text>
+      <text x="108" y="20" fill="#A8B2C3" font-size="12" letter-spacing="2.2" font-family="Arial, sans-serif">AURUM NIGHT</text>
+    </g>
+    <g transform="translate(620 108)">
+      <rect x="0" y="0" width="104" height="34" rx="999" fill="#D88A1A" fill-opacity="0.16" stroke="#D88A1A" stroke-opacity="0.35"/>
+      <text x="24" y="22" fill="#E8A84D" font-size="13" font-weight="600" font-family="Arial, sans-serif">總覽</text>
+      <text x="146" y="22" fill="#A8B2C3" font-size="13" font-weight="500" font-family="Arial, sans-serif">客戶資料</text>
+      <text x="268" y="22" fill="#A8B2C3" font-size="13" font-weight="500" font-family="Arial, sans-serif">資料源</text>
+    </g>
+    <circle cx="1428" cy="124" r="18" fill="#D88A1A"/>
+    <text x="1422" y="129" text-anchor="middle" fill="#06111A" font-size="15" font-weight="700" font-family="Arial, sans-serif">M</text>
+  </g>
+
+  <g transform="translate(104 190)">
+    <text x="0" y="0" fill="#E8A84D" font-size="12" letter-spacing="3" font-weight="700" font-family="Arial, sans-serif">AURUM NIGHT / COMMAND SURFACE</text>
+    <text x="0" y="86" fill="#E5E7EB" font-size="72" font-weight="800" letter-spacing="-2.8" font-family="Arial, sans-serif">把資料中台做成</text>
+    <text x="0" y="154" fill="#E5E7EB" font-size="72" font-weight="800" letter-spacing="-2.8" font-family="Arial, sans-serif">品牌資產</text>
+    <text x="0" y="210" fill="#A8B2C3" font-size="20" font-weight="400" font-family="Arial, sans-serif">暗色基底、單一琥珀主色、克制發光。視覺焦點只保留在內容與層級上。</text>
+
+    <g transform="translate(0 250)">
+      <rect x="0" y="0" width="184" height="54" rx="999" fill="url(#amber)"/>
+      <text x="92" y="34" text-anchor="middle" fill="#06111A" font-size="16" font-weight="700" font-family="Arial, sans-serif">新增空白面板</text>
+      <rect x="198" y="0" width="144" height="54" rx="999" fill="none" stroke="#273244" stroke-opacity="0.92"/>
+      <text x="270" y="34" text-anchor="middle" fill="#E5E7EB" font-size="16" font-weight="600" font-family="Arial, sans-serif">檢視資料源</text>
+    </g>
+  </g>
+
+  <g transform="translate(100 530)">
+    <rect x="0" y="0" width="334" height="220" rx="26" fill="url(#card)" stroke="#273244" stroke-opacity="0.85"/>
+    <text x="28" y="44" fill="#A8B2C3" font-size="12" letter-spacing="2.2" font-family="Arial, sans-serif">資料源</text>
+    <text x="28" y="108" fill="#E5E7EB" font-size="56" font-weight="800" font-family="Arial, sans-serif">04</text>
+    <text x="28" y="158" fill="#A8B2C3" font-size="18" font-family="Arial, sans-serif">已載入資料來源</text>
+    <rect x="244" y="28" width="64" height="64" rx="18" fill="#D88A1A" fill-opacity="0.12" stroke="#D88A1A" stroke-opacity="0.4"/>
+  </g>
+
+  <g transform="translate(458 530)">
+    <rect x="0" y="0" width="334" height="220" rx="26" fill="url(#card)" stroke="#273244" stroke-opacity="0.85"/>
+    <text x="28" y="44" fill="#A8B2C3" font-size="12" letter-spacing="2.2" font-family="Arial, sans-serif">面板</text>
+    <text x="28" y="108" fill="#E5E7EB" font-size="56" font-weight="800" font-family="Arial, sans-serif">08</text>
+    <text x="28" y="158" fill="#A8B2C3" font-size="18" font-family="Arial, sans-serif">可視化卡片</text>
+    <rect x="244" y="28" width="64" height="64" rx="18" fill="#E8A84D" fill-opacity="0.12" stroke="#E8A84D" stroke-opacity="0.35"/>
+  </g>
+
+  <g transform="translate(816 530)">
+    <rect x="0" y="0" width="706" height="220" rx="26" fill="url(#card)" stroke="#273244" stroke-opacity="0.85"/>
+    <text x="28" y="44" fill="#A8B2C3" font-size="12" letter-spacing="2.2" font-family="Arial, sans-serif">儀表板預覽</text>
+    <text x="28" y="88" fill="#E5E7EB" font-size="26" font-weight="700" font-family="Arial, sans-serif">轉換率與活躍度</text>
+    <g transform="translate(28 118)">
+      <rect x="0" y="50" width="630" height="8" rx="4" fill="#273244"/>
+      <rect x="0" y="50" width="400" height="8" rx="4" fill="url(#amber)"/>
+      <rect x="0" y="8" width="630" height="1" fill="#273244" opacity="0.55"/>
+      <rect x="0" y="26" width="630" height="1" fill="#273244" opacity="0.55"/>
+      <rect x="0" y="44" width="630" height="1" fill="#273244" opacity="0.55"/>
+      <path d="M0 86 C80 50, 130 112, 210 74 S370 44, 460 82 S560 60, 630 38" fill="none" stroke="#E8A84D" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(104 776)">
+    <rect x="0" y="0" width="1458" height="92" rx="22" fill="#0A1020" fill-opacity="0.9" stroke="#273244" stroke-opacity="0.8"/>
+    <text x="28" y="40" fill="#E5E7EB" font-size="18" font-weight="700" font-family="Arial, sans-serif">Aurum Night</text>
+    <text x="28" y="66" fill="#A8B2C3" font-size="13" font-family="Arial, sans-serif">dark tech / premium brand / amber accent</text>
+    <text x="1360" y="53" fill="#A8B2C3" font-size="13" font-family="Arial, sans-serif">Visual system ready</text>
+  </g>
+</svg>

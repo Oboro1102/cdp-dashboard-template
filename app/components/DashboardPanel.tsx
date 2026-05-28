@@ -1,229 +1,217 @@
-﻿import {
-    Box,
-    Flex,
-    Text,
-    Button,
-    VStack,
-    HStack,
-    Icon,
-    Card,
-} from "@chakra-ui/react";
+import { useMemo } from "react";
+import { Box, Button, Card, Flex, HStack, Text, VStack } from "@chakra-ui/react";
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 import { useDashboardStore } from "../stores/dashboardStore";
-import { useMemo } from "react";
+import { brand } from "../chakraTheme";
 
 interface DashboardPanelProps {
-    panel: {
-        id: string;
-        name: string;
-        dataSourceId: string;
-        chartConfig: {
-            type: 'bar' | 'pie';
-            xAxis?: string;
-            yAxis?: string;
-        };
+  panel: {
+    id: string;
+    name: string;
+    dataSourceId: string;
+    chartConfig: {
+      type: "bar" | "pie";
+      xAxis?: string;
+      yAxis?: string;
     };
+  };
 }
 
 export function DashboardPanel({ panel }: DashboardPanelProps) {
-    const { removePanel, getDataSource, openModal } = useDashboardStore();
+  const { removePanel, getDataSource, openModal } = useDashboardStore();
 
-    const handleRemove = () => {
-        removePanel(panel.id);
-    };
+  const dataSource = getDataSource(panel.dataSourceId);
+  const chartData = dataSource?.data || [];
+  const xAxisField = panel.chartConfig.xAxis;
+  const yAxisField = panel.chartConfig.yAxis;
 
-    const handleConfigure = () => {
-        openModal(panel.id);
-    };
+  const isConfigured =
+    panel.dataSourceId &&
+    (panel.chartConfig.type === "pie" ||
+      (panel.chartConfig.type === "bar" && panel.chartConfig.xAxis && panel.chartConfig.yAxis));
 
-    const dataSource = getDataSource(panel.dataSourceId);
-    const isConfigured = panel.dataSourceId && (
-        panel.chartConfig.type === 'pie' ||
-        (panel.chartConfig.type === 'bar' && panel.chartConfig.xAxis && panel.chartConfig.yAxis)
-    );
+  const pieFields = dataSource?.fields || [];
+  const numericFields = pieFields.filter((f) => f.type === "number");
+  const stringFields = pieFields.filter((f) => f.type === "string" || f.type === "date");
+  const pieLabelField = xAxisField || stringFields[0]?.name || pieFields[0]?.name || "name";
+  const pieValueField = yAxisField || numericFields[0]?.name || pieFields[1]?.name || pieFields[0]?.name || "value";
+  const pieColors = [brand.colors.amber, brand.colors.amberLight, "#F1C06D", "#8D5A14", "#FFDCA4"];
 
-    // ?脣??祕?豢?
-    const chartData = dataSource?.data || [];
-    const xAxisField = panel.chartConfig.xAxis;
-    const yAxisField = panel.chartConfig.yAxis;
+  const pieData = useMemo(
+    () =>
+      chartData.slice(0, 5).map((record, index) => {
+        const rawValue = record[pieValueField];
+        const value = typeof rawValue === "number" ? rawValue : Number(rawValue) || 0;
+        return {
+          name: String(record[pieLabelField] || `項目 ${index + 1}`),
+          value,
+          color: pieColors[index % pieColors.length],
+        };
+      }),
+    [chartData, pieValueField, pieLabelField],
+  );
 
-    const pieFields = dataSource?.fields || [];
-    const numericFields = pieFields.filter(f => f.type === 'number');
-    const stringFields = pieFields.filter(f => f.type === 'string' || f.type === 'date');
+  const barChartData = useMemo(
+    () =>
+      chartData.map((record) => ({
+        name: String(record[xAxisField || ""] || ""),
+        value: Number(record[yAxisField || ""]) || 0,
+      })),
+    [chartData, xAxisField, yAxisField],
+  );
 
-    // label 甈?嚗蝙??xAxis ?洵銝??string/date 甈?
-    const pieLabelField = xAxisField || stringFields[0]?.name || pieFields[0]?.name || 'name';
-    const pieValueField = yAxisField || numericFields[0]?.name || pieFields[1]?.name || pieFields[0]?.name || 'value';
+  return (
+    <Card.Root
+      h="full"
+      bg="nexus.surfaceCard"
+      borderWidth="1px"
+      borderColor="nexus.lineSoft"
+      boxShadow="panel"
+      overflow="hidden"
+    >
+      <Card.Body p={6}>
+        <Flex justify="space-between" align="center" mb={4} gap={4}>
+          <VStack align="start" gap={1}>
+            <Text fontSize="lg" fontWeight="semibold" color="nexus.text">
+              {panel.name}
+            </Text>
+            <Text fontSize="sm" color="nexus.textMuted">
+              {dataSource?.name || "尚未選擇資料來源"}
+              {xAxisField && yAxisField ? ` · ${xAxisField} 對 ${yAxisField}` : ""}
+            </Text>
+          </VStack>
 
-    const pieColors = ['#10B981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0'];
-    const pieData = useMemo(() =>
-        chartData.slice(0, 5).map((record, index) => {
-            const rawValue = record[pieValueField];
-            const value = typeof rawValue === 'number' ? rawValue : Number(rawValue) || 0;
-            return {
-                name: String(record[pieLabelField] || `? ${index + 1}`),
-                value: value,
-                color: pieColors[index % pieColors.length],
-            };
-        }),
-        [chartData, pieValueField, pieLabelField]
-    );
+          <HStack gap={2}>
+            {isConfigured && (
+              <Button size="sm" variant="nexusOutline" onClick={() => openModal(panel.id)} px={3}>
+                設定
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              color="red.300"
+              _hover={{ color: "red.200", bg: "rgba(239, 68, 68, 0.1)" }}
+              onClick={() => removePanel(panel.id)}
+              px={3}
+            >
+              刪除
+            </Button>
+          </HStack>
+        </Flex>
 
-    // 雿輻 useMemo ?脰???雿喳?
-    const barChartData = useMemo(() =>
-        chartData.map((record) => ({
-            name: String(record[xAxisField || ''] || ''),
-            value: Number(record[yAxisField || '']) || 0,
-        })),
-        [chartData, xAxisField, yAxisField]
-    );
+        <Box
+          minH="300px"
+          bg="nexus.bg1"
+          borderRadius="panel"
+          borderWidth="1px"
+          borderColor="nexus.lineSoft"
+          boxShadow="inset"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          p={6}
+          position="relative"
+          overflow="hidden"
+        >
+          <Box
+            position="absolute"
+            inset={0}
+            bg={`radial-gradient(circle at top left, ${brand.colors.amberAlpha} 0%, transparent 30%), radial-gradient(circle at bottom right, rgba(232, 168, 77, 0.06) 0%, transparent 32%)`}
+            pointerEvents="none"
+          />
 
-    return (
-        <Card.Root h="full">
-            <Card.Body p={6}>
-                <Flex justify="space-between" align="center" mb={4}>
-                    <VStack align="start" gap={1}>
-                        <Text fontSize="lg" fontWeight="semibold" color="white">
-                            {panel.name}
-                        </Text>
-                        <Text fontSize="sm" color="slate.400">
-                            {dataSource?.name || '尚未命名的面板'}
-                            {xAxisField && yAxisField && ` ${xAxisField} vs ${yAxisField}`}
-                        </Text>
-                    </VStack>
-                    <HStack gap={2}>
-                        {isConfigured && (
-                            <Button
-                                size="sm"
-                                variant="nexusOutline"
-                                onClick={handleConfigure}
-                                px={3}
-                            >
-                                <Icon boxSize={4}>
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </Icon>
-                            </Button>
-                        )}
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            color="red.400"
-                            _hover={{ color: "red.300", bg: "rgba(239, 68, 68, 0.1)" }}
-                            onClick={handleRemove}
-                            px={3}
-                        >
-                            <Icon boxSize={4}>
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </Icon>
-                        </Button>
-                    </HStack>
-                </Flex>
-
-                {/* ?”???*/}
-                <Box
-                    minH="300px"
-                    bg="nexus.slateLight"
-                    borderRadius="crisp"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    p={6}
-                >
-                    {!isConfigured ? (
-                        <VStack gap={4}>
-                            <Icon boxSize={12} color="slate.500">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </Icon>
-                            <Button
-                                onClick={handleConfigure}
-                                variant="nexusPrimary"
-                                size="sm"
-                            >
-                                設定面板
-                            </Button>
-                            <Text color="slate.400" fontSize="sm" textAlign="center" maxW="xs">
-                                這是尚未完成設定的面板草稿，請先選擇資料來源與圖表類型。
-                            </Text>
-                        </VStack>
-                    ) : chartData.length === 0 ? (
-                        <Text color="slate.500" fontSize="sm">
-                            ?⊥?憿舐內
-                        </Text>
-                    ) : panel.chartConfig.type === 'bar' ? (
-                        /* ?瑟???- 雿輻 Recharts */
-                        <Box w="full" h="250px">
-                            <Text fontSize="sm" fontWeight="medium" color="slate.300" mb={4} textAlign="center">
-                                {xAxisField} vs {yAxisField}
-                            </Text>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
-                                    <YAxis stroke="#94a3b8" fontSize={11} />
-                                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#ffffff10', color: '#fff' }} />
-                                    <Bar dataKey="value" fill="#10B981" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </Box>
-                    ) : (
-                        /* ????- 雿輻 Recharts */
-                        <VStack gap={4} w="full">
-                            <Box w="full" h="250px">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={pieData}
-                                            cx="50%"
-                                            cy="50%"
-                                            labelLine={false}
-                                            label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                                            outerRadius={80}
-                                            fill="#8884d8"
-                                            dataKey="value"
-                                        >
-                                            {pieData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#ffffff10', color: '#fff' }} />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </Box>
-                            {/* ?? */}
-                            <VStack gap={2} align="start" w="full">
-                                {pieData.map((item, index) => (
-                                    <HStack key={index} gap={2}>
-                                        <Box w="12px" h="12px" borderRadius="sm" bg={item.color} />
-                                        <Text fontSize="xs" color="slate.400">
-                                            {item.name}: {item.value}
-                                        </Text>
-                                    </HStack>
-                                ))}
-                            </VStack>
-                        </VStack>
-                    )}
-                </Box>
-            </Card.Body>
-        </Card.Root>
-    );
+          {!isConfigured ? (
+            <VStack gap={4} position="relative">
+              <Text color="nexus.textDim" fontSize="sm" textAlign="center" maxW="xs">
+                這個面板還沒設定完成。先選擇資料來源與欄位，才能開始繪圖。
+              </Text>
+              <Button onClick={() => openModal(panel.id)} variant="nexusPrimary" size="sm">
+                完成設定
+              </Button>
+            </VStack>
+          ) : chartData.length === 0 ? (
+            <Text color="nexus.textDim" fontSize="sm" position="relative">
+              目前來源沒有可繪製的資料。
+            </Text>
+          ) : panel.chartConfig.type === "bar" ? (
+            <Box w="full" h="250px" position="relative">
+              <Text fontSize="sm" fontWeight="medium" color="nexus.textMuted" mb={4} textAlign="center">
+                {xAxisField} · {yAxisField}
+              </Text>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(39,50,68,0.65)" />
+                  <XAxis dataKey="name" stroke={brand.colors.textDim} fontSize={11} />
+                  <YAxis stroke={brand.colors.textDim} fontSize={11} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: brand.colors.bg2,
+                      borderColor: brand.colors.lineSoft,
+                      color: brand.colors.text,
+                      borderRadius: "14px",
+                    }}
+                    cursor={{ fill: "rgba(216, 138, 26, 0.08)" }}
+                  />
+                  <Bar dataKey="value" fill={brand.colors.amber} radius={[10, 10, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : (
+            <VStack gap={4} w="full" position="relative">
+              <Box w="full" h="250px">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                      outerRadius={86}
+                      fill={brand.colors.amber}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: brand.colors.bg2,
+                        borderColor: brand.colors.lineSoft,
+                        color: brand.colors.text,
+                        borderRadius: "14px",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              <VStack gap={2} align="start" w="full">
+                {pieData.map((item, index) => (
+                  <HStack key={index} gap={2}>
+                    <Box w="12px" h="12px" borderRadius="sm" bg={item.color} />
+                    <Text fontSize="xs" color="nexus.textMuted">
+                      {item.name} · {item.value}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </VStack>
+          )}
+        </Box>
+      </Card.Body>
+    </Card.Root>
+  );
 }
-

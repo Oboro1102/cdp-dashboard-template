@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+import { brand } from "../chakraTheme";
 
 type Orb = {
   x: number;
@@ -6,7 +7,7 @@ type Orb = {
   radius: number;
   vx: number;
   vy: number;
-  hue: number;
+  color: string;
   alpha: number;
   phase: number;
 };
@@ -28,14 +29,14 @@ const ThreeBackground = () => {
   useEffect(() => {
     if (!mountRef.current) return;
 
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
     if (!context) return;
 
-    canvas.style.position = 'absolute';
-    canvas.style.inset = '0';
-    canvas.style.display = 'block';
+    canvas.style.position = "absolute";
+    canvas.style.inset = "0";
+    canvas.style.display = "block";
     mountRef.current.appendChild(canvas);
 
     let width = 0;
@@ -44,7 +45,7 @@ const ThreeBackground = () => {
     let frameId = 0;
     let noisePattern: CanvasPattern | null = null;
 
-    const orbPalette = [168, 172, 160];
+    const orbPalette = [brand.colors.amber, brand.colors.amberLight, brand.colors.amberDeep];
     let orbs: Orb[] = [];
 
     const dust: Dust[] = [];
@@ -58,24 +59,24 @@ const ThreeBackground = () => {
           x: Math.random() * width,
           y: Math.random() * height,
           z: Math.random(),
-          vx: (Math.random() - 0.5) * 0.18,
-          vy: (Math.random() - 0.5) * 0.16,
-          size: 0.8 + Math.random() * 1.8,
-          alpha: 0.12 + Math.random() * 0.28,
+          vx: (Math.random() - 0.5) * 0.14,
+          vy: (Math.random() - 0.5) * 0.12,
+          size: 0.8 + Math.random() * 1.6,
+          alpha: 0.08 + Math.random() * 0.22,
           phase: Math.random() * Math.PI * 2,
         });
       }
     };
 
     const createOrbs = () => {
-      orbs = orbPalette.map((hue, index) => ({
-        x: width * (0.22 + index * 0.28),
-        y: height * (0.2 + index * 0.24),
-        radius: 260 + index * 70,
-        vx: (index % 2 === 0 ? 1 : -1) * (0.02 + index * 0.008),
-        vy: (index % 2 === 0 ? -1 : 1) * (0.016 + index * 0.006),
-        hue,
-        alpha: 0.12 - index * 0.02,
+      orbs = orbPalette.map((color, index) => ({
+        x: width * (0.18 + index * 0.31),
+        y: height * (0.16 + index * 0.2),
+        radius: 260 + index * 72,
+        vx: (index % 2 === 0 ? 1 : -1) * (0.018 + index * 0.007),
+        vy: (index % 2 === 0 ? -1 : 1) * (0.014 + index * 0.005),
+        color,
+        alpha: 0.14 - index * 0.02,
         phase: Math.random() * Math.PI * 2,
       }));
     };
@@ -92,15 +93,15 @@ const ThreeBackground = () => {
 
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const noiseCanvas = document.createElement('canvas');
+      const noiseCanvas = document.createElement("canvas");
       noiseCanvas.width = 160;
       noiseCanvas.height = 160;
-      const noiseContext = noiseCanvas.getContext('2d');
+      const noiseContext = noiseCanvas.getContext("2d");
 
       if (noiseContext) {
         const imageData = noiseContext.createImageData(
           noiseCanvas.width,
-          noiseCanvas.height
+          noiseCanvas.height,
         );
 
         for (let i = 0; i < imageData.data.length; i += 4) {
@@ -108,11 +109,11 @@ const ThreeBackground = () => {
           imageData.data[i] = value;
           imageData.data[i + 1] = value;
           imageData.data[i + 2] = value;
-          imageData.data[i + 3] = Math.random() > 0.86 ? 28 : 10;
+          imageData.data[i + 3] = Math.random() > 0.88 ? 24 : 8;
         }
 
         noiseContext.putImageData(imageData, 0, 0);
-        noisePattern = context.createPattern(noiseCanvas, 'repeat');
+        noisePattern = context.createPattern(noiseCanvas, "repeat");
       }
 
       createDust();
@@ -123,14 +124,14 @@ const ThreeBackground = () => {
       context.clearRect(0, 0, width, height);
 
       const base = context.createLinearGradient(0, 0, width, height);
-      base.addColorStop(0, '#040712');
-      base.addColorStop(0.45, '#050b16');
-      base.addColorStop(1, '#02040b');
+      base.addColorStop(0, brand.colors.bg0);
+      base.addColorStop(0.48, brand.colors.bg1);
+      base.addColorStop(1, "#02040b");
       context.fillStyle = base;
       context.fillRect(0, 0, width, height);
 
       context.save();
-      context.globalCompositeOperation = 'lighter';
+      context.globalCompositeOperation = "lighter";
 
       orbs.forEach((orb, index) => {
         orb.x += orb.vx;
@@ -147,15 +148,15 @@ const ThreeBackground = () => {
         const gradient = context.createRadialGradient(
           x,
           y,
-          orb.radius * 0.08,
+          orb.radius * 0.06,
           x,
           y,
-          orb.radius
+          orb.radius,
         );
 
-        gradient.addColorStop(0, `hsla(${orb.hue}, 85%, 58%, ${orb.alpha})`);
-        gradient.addColorStop(0.35, `hsla(${orb.hue}, 75%, 40%, ${orb.alpha * 0.5})`);
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        gradient.addColorStop(0, `${orb.color}cc`);
+        gradient.addColorStop(0.34, `${orb.color}66`);
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
 
         context.fillStyle = gradient;
         context.beginPath();
@@ -166,7 +167,7 @@ const ThreeBackground = () => {
       context.restore();
 
       context.save();
-      context.globalCompositeOperation = 'screen';
+      context.globalCompositeOperation = "screen";
 
       for (const dot of dust) {
         dot.x += dot.vx;
@@ -203,10 +204,10 @@ const ThreeBackground = () => {
 
     resize();
     frameId = window.requestAnimationFrame(draw);
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
 
     return () => {
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
       window.cancelAnimationFrame(frameId);
 
       if (mountRef.current && canvas.parentNode === mountRef.current) {
@@ -219,14 +220,14 @@ const ThreeBackground = () => {
     <div
       ref={mountRef}
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         zIndex: 0,
-        pointerEvents: 'none',
-        overflow: 'hidden',
+        pointerEvents: "none",
+        overflow: "hidden",
       }}
     />
   );
