@@ -176,7 +176,7 @@ export function DashboardModal() {
                   </Select.Control>
                   <Portal>
                     <Select.Positioner>
-                    <Select.Content bg="nexus.surfaceCard">
+                      <Select.Content>
                         {dataSourceCollection.items.map((source) => (
                           <Select.Item item={source} key={source.value}>
                             <Select.ItemText>{source.label}</Select.ItemText>

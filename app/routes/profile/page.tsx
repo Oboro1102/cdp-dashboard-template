@@ -46,10 +46,6 @@ export default function ProfilePage() {
         <Card.Root
           maxW="560px"
           w="full"
-          bg="nexus.surfaceCard"
-          borderColor="nexus.lineSoft"
-          borderWidth="1px"
-          boxShadow="panel"
         >
           <Card.Body p={8}>
             <Stack gap={6} align="center" textAlign="center">
@@ -128,7 +124,7 @@ export default function ProfilePage() {
           </Text>
         </Stack>
 
-        <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+        <Card.Root>
           <Card.Body p={{ base: 6, md: 8 }}>
             <Stack gap={6}>
               {success && (
@@ -213,7 +209,7 @@ export default function ProfilePage() {
                             </Select.IndicatorGroup>
                           </Select.Control>
                           <Select.Positioner>
-                            <Select.Content bg="nexus.surfaceCard">
+                            <Select.Content>
                               {genderOptions.items.map((item) => (
                                 <Select.Item item={item} key={item.value}>
                                   <Select.ItemText>{item.label}</Select.ItemText>

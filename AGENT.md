@@ -43,6 +43,7 @@ npm run typecheck
 
 - 以 TypeScript 撰寫新功能，避免新增不必要的 `any`
 - 既有架構已使用 Chakra UI，優先沿用現有元件與 theme
+- 共用 Chakra 元件的樣式優先收斂到 `app/chakraTheme.ts`，不要在 `app/routes/` 或 `app/components/` 針對同一個元件另外覆蓋底色、邊框、圓角、文字色或選取狀態。`Select` 這類多 slot 元件要放在 `slotRecipes`，不是 `recipes`
 - 狀態若是跨頁共享，優先放到 `app/stores/`
 - API 或資料模擬需求，優先擴充 `app/mocks/`
 - 路由與頁面邏輯請放在 `app/routes/`，不要把頁面邏輯塞進共用元件
@@ -72,4 +73,3 @@ npm run build
 - 不要刪除或重構整個資料夾，除非有明確需求
 - 若需要新增檔案，優先放在現有對應資料夾內
 - 若要調整 mock 資料或 mock handler，需確認對應頁面不會因此失效
-

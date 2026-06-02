@@ -206,7 +206,7 @@ export default function CustomerDetailPage() {
               letterSpacing="0.14em"
               textTransform="uppercase"
             >
-              Customer detail
+              客戶閱覽
             </Text>
             <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
               客戶詳情
@@ -221,7 +221,7 @@ export default function CustomerDetailPage() {
           gap={3}
         >
           <Text color="nexus.textMuted">
-            這個頁面集中顯示客戶基本資料、識別資訊、價值指標與購買紀錄。
+            從客戶閱覽視角查看基本資料、識別資訊、價值指標與購買紀錄。
           </Text>
           <Box
             w="fit-content"
@@ -242,7 +242,7 @@ export default function CustomerDetailPage() {
       </Stack>
 
       <Stack gap={6}>
-        <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+        <Card.Root>
           <Card.Body p={6}>
             <Heading size="lg" mb={6} color="nexus.text">
               基本資料
@@ -258,7 +258,7 @@ export default function CustomerDetailPage() {
           </Card.Body>
         </Card.Root>
 
-        <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+        <Card.Root>
           <Card.Body p={6}>
             <Heading size="lg" mb={6} color="nexus.text">
               識別資訊
@@ -271,7 +271,7 @@ export default function CustomerDetailPage() {
           </Card.Body>
         </Card.Root>
 
-        <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+        <Card.Root>
           <Card.Body p={6}>
             <Heading size="lg" mb={6} color="nexus.text">
               價值指標
@@ -285,13 +285,13 @@ export default function CustomerDetailPage() {
         </Card.Root>
 
         {customer.purchaseHistory?.length > 0 && (
-          <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+          <Card.Root>
             <Card.Body p={6}>
               <Heading size="lg" mb={6} color="nexus.text">
                 購買紀錄
               </Heading>
               <Box overflowX="auto">
-                <Table.Root size="sm" bg="nexus.surfaceCard">
+                <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
                       {["訂單編號", "購買日期", "金額", "狀態", "操作"].map((column, index) => (
@@ -340,7 +340,7 @@ export default function CustomerDetailPage() {
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={(e) => !e.open && closeDrawer()}>
         <Portal>
-          <Drawer.Backdrop bg="rgba(2, 4, 11, 0.8)" backdropFilter="blur(4px)" />
+          <Drawer.Backdrop />
           <Drawer.Content
             position="fixed"
             top="0"
@@ -348,10 +348,6 @@ export default function CustomerDetailPage() {
             height="100dvh"
             width="420px"
             maxWidth="100vw"
-            bg="nexus.bg1"
-            borderLeft="1px solid"
-            borderColor="nexus.lineSoft"
-            boxShadow="panel"
             p={6}
             display="flex"
             flexDirection="column"
@@ -379,7 +375,7 @@ export default function CustomerDetailPage() {
 
                   <Box borderTopWidth="1px" borderColor="nexus.lineSoft" pt={4}>
                     <Text fontSize="sm" color="nexus.textMuted" mb={3} fontWeight="medium">
-                      商品明細
+                      訂單商品
                     </Text>
                     <Stack gap={3}>
                       {selectedPurchase.items.map((item) => (

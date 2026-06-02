@@ -125,11 +125,11 @@ export default function CustomerProfilePage() {
           客戶資料
         </Heading>
         <Text color="nexus.textMuted">
-          以同一套暗色介面檢視客戶清單、會員等級與交易表現。
+          以客戶閱覽視角整理清單、會員等級與交易表現。
         </Text>
       </Stack>
 
-      <Card.Root bg="nexus.surfaceCard" borderColor="nexus.lineSoft" borderWidth="1px" boxShadow="panel">
+      <Card.Root>
         <Card.Body p={{ base: 4, md: 6 }}>
           <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={6}>
             <Box>
@@ -154,7 +154,7 @@ export default function CustomerProfilePage() {
                 </Select.Control>
                 <Portal>
                   <Select.Positioner>
-                    <Select.Content bg="nexus.surfaceCard">
+                    <Select.Content>
                       {pageSizeOptions.items.map((item) => (
                         <Select.Item item={item} key={item.value}>
                           <Select.ItemText>{item.label}</Select.ItemText>
@@ -193,7 +193,7 @@ export default function CustomerProfilePage() {
           {!loading && !error && (
             <>
               <Box overflowX="auto">
-                <Table.Root size="sm" bg="nexus.surfaceCard">
+                <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
                       {["Email", "電話", "會員等級", "CLV", "活躍分數", "營收貢獻", "最近購買", "註冊時間", "操作"].map(
@@ -340,7 +340,7 @@ function BadgeLike() {
       letterSpacing="0.14em"
       textTransform="uppercase"
     >
-      Customer Intelligence
+      客戶閱覽
     </Box>
   );
 }

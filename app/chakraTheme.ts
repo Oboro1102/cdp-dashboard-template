@@ -52,6 +52,7 @@ export const brand = {
     glass: "rgba(14, 18, 32, 0.84)",
     glassStrong: "rgba(10, 16, 32, 0.92)",
     surfaceCard: "rgba(14, 19, 32, 0.98)",
+    surfaceElevated: "rgba(18, 24, 39, 0.98)",
     overlay: "rgba(2, 4, 11, 0.78)",
   },
   fonts: {
@@ -74,7 +75,10 @@ const buttonRecipe = defineRecipe({
   variants: {
     variant: {
       nexusPrimary: {
-        bg: "linear-gradient(90deg, var(--chakra-colors-nexus-amber-deep) 0%, var(--chakra-colors-nexus-amber) 55%, var(--chakra-colors-nexus-amber-light) 100%)",
+        bg: "linear-gradient(90deg, rgba(143, 83, 11, 0.98) 0%, rgba(168, 101, 15, 0.98) 28%, rgba(216, 138, 26, 0.98) 65%, rgba(232, 168, 77, 0.98) 100%)",
+        backgroundColor: "nexus.amberDeep",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 100%",
         color: "nexus.bg0",
         boxShadow: "amberGlow",
         _hover: {
@@ -233,6 +237,7 @@ const selectRecipe = defineSlotRecipe({
       borderRadius: "crisp",
       bg: "nexus.bg1",
       borderWidth: "1px",
+      borderStyle: "solid",
       borderColor: "nexus.lineSoft",
       color: "nexus.text",
       _hover: {
@@ -257,8 +262,9 @@ const selectRecipe = defineSlotRecipe({
       zIndex: 1400,
     },
     content: {
-      background: "nexus.surfaceCard",
+      bg: "nexus.bg2",
       borderWidth: "1px",
+      borderStyle: "solid",
       borderColor: "nexus.lineSoft",
       borderRadius: "crisp",
       boxShadow: "panelSoft",
@@ -266,6 +272,7 @@ const selectRecipe = defineSlotRecipe({
       color: "nexus.text",
     },
     list: {
+      bg: "transparent",
       gap: 1,
     },
     item: {
@@ -275,23 +282,32 @@ const selectRecipe = defineSlotRecipe({
       gap: 2,
       width: "full",
       color: "nexus.text",
+      bg: "transparent",
       borderRadius: "10px",
+      transition: "background-color 160ms ease, color 160ms ease",
+      _hover: {
+        background: "nexus.bg3",
+        color: "nexus.text",
+      },
       _highlighted: {
         background: "nexus.bg3",
         color: "nexus.text",
       },
       _selected: {
-        background: "nexus.bg3",
+        background: "rgba(216, 138, 26, 0.18)",
         color: "nexus.amberLight",
         boxShadow: "inset",
+        _highlighted: {
+          background: "rgba(216, 138, 26, 0.22)",
+        },
       },
     },
     itemText: {
-      color: "inherit",
+      color: "nexus.text",
       flex: 1,
     },
     itemIndicator: {
-      color: "nexus.amber",
+      color: "nexus.amberLight",
     },
     itemGroupLabel: {
       color: "nexus.textDim",
@@ -499,6 +515,7 @@ const nexusConfig = defineConfig({
           slateLight: { value: brand.colors.bg3 },
           bg3: { value: brand.colors.bg3 },
           surfaceCard: { value: brand.surfaces.surfaceCard },
+          surfaceElevated: { value: brand.surfaces.surfaceElevated },
           line: { value: brand.colors.line },
           lineSoft: { value: brand.colors.lineSoft },
           text: { value: brand.colors.text },
@@ -558,7 +575,6 @@ const nexusConfig = defineConfig({
       input: inputRecipe,
       badge: badgeRecipe,
       alert: alertRecipe,
-      select: selectRecipe,
       nativeSelect: nativeSelectRecipe,
     },
     slotRecipes: {
@@ -566,6 +582,7 @@ const nexusConfig = defineConfig({
       table: tableRecipe,
       drawer: drawerRecipe,
       popover: popoverRecipe,
+      select: selectRecipe,
     },
   },
 });
