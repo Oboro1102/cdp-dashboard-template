@@ -10,9 +10,9 @@ html,
 body {
   min-height: 100%;
   background:
-    radial-gradient(circle at 14% 0%, rgba(216, 138, 26, 0.18), transparent 28%),
-    radial-gradient(circle at 86% 8%, rgba(232, 168, 77, 0.1), transparent 24%),
-    radial-gradient(circle at 50% 100%, rgba(8, 15, 30, 0.55), transparent 40%),
+    radial-gradient(circle at 14% 0%, var(--aurum-amber-glow), transparent 28%),
+    radial-gradient(circle at 86% 8%, var(--aurum-amber-glow-soft), transparent 24%),
+    radial-gradient(circle at 50% 100%, var(--aurum-bg-deep-soft), transparent 40%),
     linear-gradient(180deg, var(--aurum-bg0, #060913) 0%, var(--aurum-bg1, #0a1020) 46%, #02040b 100%);
   color: var(--aurum-text, #e5e7eb);
   color-scheme: dark;
@@ -26,6 +26,6 @@ body {
 }
 
 ::selection {
-  background: rgba(216, 138, 26, 0.28);
+  background: var(--aurum-amber-hover-strong);
   color: #fff8ed;
 }

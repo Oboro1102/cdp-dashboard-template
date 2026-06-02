@@ -72,14 +72,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
   );
 
   return (
-    <Card.Root
-      h="full"
-      bg="nexus.surfaceCard"
-      borderWidth="1px"
-      borderColor="nexus.lineSoft"
-      boxShadow="panel"
-      overflow="hidden"
-    >
+    <Card.Root h="full" overflow="hidden">
       <Card.Body p={6}>
         <Flex justify="space-between" align="center" mb={4} gap={4}>
           <VStack align="start" gap={1}>
@@ -88,7 +81,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
             </Text>
             <Text fontSize="sm" color="nexus.textMuted">
               {dataSource?.name || "尚未選擇資料來源"}
-              {xAxisField && yAxisField ? ` · ${xAxisField} 對 ${yAxisField}` : ""}
+              {xAxisField && yAxisField ? ` · ${xAxisField} / ${yAxisField}` : ""}
             </Text>
           </VStack>
 
@@ -102,7 +95,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
               size="sm"
               variant="ghost"
               color="red.300"
-              _hover={{ color: "red.200", bg: "rgba(239, 68, 68, 0.1)" }}
+              _hover={{ color: "red.200", bg: "nexus.dangerHover" }}
               onClick={() => removePanel(panel.id)}
               px={3}
             >
@@ -128,31 +121,31 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
           <Box
             position="absolute"
             inset={0}
-            bg={`radial-gradient(circle at top left, ${brand.colors.amberAlpha} 0%, transparent 30%), radial-gradient(circle at bottom right, rgba(232, 168, 77, 0.06) 0%, transparent 32%)`}
+            bg="radial-gradient(circle at top left, var(--aurum-amber-glow) 0%, transparent 30%), radial-gradient(circle at bottom right, var(--aurum-amber-glow-soft) 0%, transparent 32%)"
             pointerEvents="none"
           />
 
           {!isConfigured ? (
             <VStack gap={4} position="relative">
-              <Text color="nexus.textDim" fontSize="sm" textAlign="center" maxW="xs">
-                這個面板還沒設定完成。先選擇資料來源與欄位，才能開始繪圖。
+              <Text color="nexus.textMuted" fontSize="sm" textAlign="center" maxW="xs">
+                這張面板還沒設定好。先按「設定」，選一個資料來源，接著指定圖表類型與欄位。
               </Text>
               <Button onClick={() => openModal(panel.id)} variant="nexusPrimary" size="sm">
-                完成設定
+                立即設定
               </Button>
             </VStack>
           ) : chartData.length === 0 ? (
-            <Text color="nexus.textDim" fontSize="sm" position="relative">
-              目前來源沒有可繪製的資料。
+            <Text color="nexus.textMuted" fontSize="sm" position="relative" textAlign="center" maxW="xs">
+              這個資料來源目前沒有資料，所以暫時無法顯示圖表。
             </Text>
           ) : panel.chartConfig.type === "bar" ? (
             <Box w="full" h="250px" position="relative">
               <Text fontSize="sm" fontWeight="medium" color="nexus.textMuted" mb={4} textAlign="center">
-                {xAxisField} · {yAxisField}
+                {xAxisField} / {yAxisField}
               </Text>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(39,50,68,0.65)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--aurum-chart-grid)" />
                   <XAxis dataKey="name" stroke={brand.colors.textDim} fontSize={11} />
                   <YAxis stroke={brand.colors.textDim} fontSize={11} />
                   <Tooltip
@@ -162,7 +155,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
                       color: brand.colors.text,
                       borderRadius: "14px",
                     }}
-                    cursor={{ fill: "rgba(216, 138, 26, 0.08)" }}
+                    cursor={{ fill: "var(--aurum-chart-cursor)" }}
                   />
                   <Bar dataKey="value" fill={brand.colors.amber} radius={[10, 10, 0, 0]} />
                 </BarChart>

@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import type { CSSProperties } from "react";
 import {
   isRouteErrorResponse,
@@ -82,7 +82,7 @@ function ErrorFallback({ message, details, stack }: { message: string; details: 
             !
           </div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: brand.colors.text, marginBottom: "0.5rem" }}>
-            系統發生錯誤
+            {message}
           </h1>
           <p style={{ color: brand.colors.textMuted, marginBottom: "1rem" }}>{details}</p>
           <div
@@ -123,7 +123,7 @@ function ErrorFallback({ message, details, stack }: { message: string; details: 
               cursor: "pointer",
             }}
           >
-            重新載入
+            重新整理
           </button>
         </div>
       </div>
@@ -159,7 +159,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
             "--aurum-bg0": brand.colors.bg0,
             "--aurum-bg1": brand.colors.bg1,
             "--aurum-bg2": brand.colors.bg2,
+            "--aurum-bg-deep-soft": brand.surfaces.bgDeepSoft,
+            "--aurum-amber-glow": brand.surfaces.heroGlow,
+            "--aurum-amber-glow-soft": brand.surfaces.heroGlowSoft,
+            "--aurum-amber-hover": brand.surfaces.amberHover,
+            "--aurum-amber-hover-strong": brand.surfaces.amberHoverStrong,
+            "--aurum-danger-hover": brand.surfaces.dangerHover,
+            "--aurum-danger-hover-strong": brand.surfaces.dangerHoverStrong,
+            "--aurum-chart-grid": brand.surfaces.chartGrid,
+            "--aurum-chart-cursor": brand.surfaces.chartCursor,
             "--aurum-line": brand.colors.line,
+            "--aurum-line-soft": brand.colors.lineSoft,
             "--aurum-text": brand.colors.text,
             "--aurum-text-muted": brand.colors.textMuted,
             "--aurum-amber": brand.colors.amber,
@@ -182,18 +192,17 @@ export default function App() {
   const currentPath = location.pathname;
 
   const isAuthRoute = AUTH_ROUTES.some((route) => currentPath === route || currentPath.startsWith(`${route}/`));
-  const isPublicRoute = AUTH_ROUTES.some((route) => currentPath === route || currentPath.startsWith(`${route}/`));
 
   useEffect(() => {
-    if (!isAuthRoute && !isPublicRoute && !isAuthenticated) {
+    if (!isAuthRoute && !isAuthenticated) {
       navigate("/login", { state: { from: location }, replace: true });
       return;
     }
 
-    if (isPublicRoute && isAuthenticated) {
+    if (isAuthRoute && isAuthenticated) {
       navigate("/", { replace: true });
     }
-  }, [isAuthenticated, isAuthRoute, isPublicRoute, navigate, location]);
+  }, [isAuthenticated, isAuthRoute, navigate, location]);
 
   return (
     <ChakraProvider value={system}>
@@ -213,13 +222,13 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "發生未知錯誤";
-  let details = "請稍後再試。";
+  let message = "發生未預期的錯誤";
+  let details = "請稍後再試一次。";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "錯誤";
-    details = error.status === 404 ? "找不到你要瀏覽的頁面。" : error.statusText || details;
+    message = error.status === 404 ? "找不到頁面" : "路由錯誤";
+    details = error.status === 404 ? "你要找的頁面不存在或已被移除。" : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

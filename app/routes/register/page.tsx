@@ -18,7 +18,7 @@ export default function RegisterPage() {
     setLocalError(null);
 
     if (password !== confirmPassword) {
-      setLocalError("密碼與確認密碼不一致");
+      setLocalError("兩次輸入的密碼不一致");
       return;
     }
 
@@ -33,15 +33,7 @@ export default function RegisterPage() {
   return (
     <Flex minH="100dvh" align="center" justify="center" px={4} py={8}>
       <Box w="full" maxW="980px">
-        <Card.Root
-          overflow="hidden"
-          borderRadius="shell"
-          borderWidth="1px"
-          borderColor="nexus.lineSoft"
-          bg="nexus.surfaceCard"
-          boxShadow="panel"
-          backdropFilter="blur(20px)"
-        >
+        <Card.Root borderRadius="shell">
           <Box p={{ base: 8, lg: 10 }}>
             <Stack gap={6}>
               <Stack gap={2} maxW="44rem">
@@ -50,7 +42,7 @@ export default function RegisterPage() {
                   建立新帳號
                 </Heading>
                 <Text color="nexus.textMuted" lineHeight="1.8">
-                  註冊後可以直接進入資料工作台，建立面板、檢視客戶資料並維持一致的視覺語言。
+                  填入姓名、Email 與密碼，就可以開始使用工作台。註冊完成後會直接帶你回首頁。
                 </Text>
               </Stack>
 
@@ -73,7 +65,7 @@ export default function RegisterPage() {
                     <Field.Label color="nexus.textMuted">姓名</Field.Label>
                     <Input
                       id="name"
-                      placeholder="請輸入姓名"
+                      placeholder="輸入姓名"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       size="lg"
@@ -99,7 +91,7 @@ export default function RegisterPage() {
                     <Input
                       id="password"
                       type="password"
-                      placeholder="至少 6 碼"
+                      placeholder="至少 6 個字元"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       size="lg"
@@ -123,14 +115,7 @@ export default function RegisterPage() {
                     )}
                   </Field.Root>
 
-                  <Button
-                    type="submit"
-                    variant="nexusPrimary"
-                    size="lg"
-                    w="full"
-                    loading={isLoading}
-                    loadingText="建立中"
-                  >
+                  <Button type="submit" variant="nexusPrimary" size="lg" w="full" loading={isLoading} loadingText="註冊中">
                     建立帳號
                   </Button>
                 </Stack>
@@ -166,7 +151,7 @@ function BadgeLike() {
       letterSpacing="0.14em"
       textTransform="uppercase"
     >
-      Secure Access
+      建立帳號
     </Box>
   );
 }

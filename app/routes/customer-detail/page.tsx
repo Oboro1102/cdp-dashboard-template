@@ -67,24 +67,24 @@ function formatCurrency(amount: number) {
 function getMembershipLevelColor(level: CustomerDetail["membershipLevel"]) {
   switch (level) {
     case "platinum":
-      return { bg: "rgba(232, 168, 77, 0.18)", color: "nexus.amberLight" };
+      return { bg: "nexus.amberHoverStrong", color: "nexus.amberLight" };
     case "gold":
-      return { bg: "rgba(216, 138, 26, 0.16)", color: "nexus.amber" };
+      return { bg: "nexus.amberHover", color: "nexus.amber" };
     case "silver":
-      return { bg: "rgba(113, 128, 150, 0.18)", color: "nexus.textMuted" };
+      return { bg: "nexus.mutedSoft", color: "nexus.textMuted" };
     default:
-      return { bg: "rgba(168, 101, 15, 0.18)", color: "nexus.amberDeep" };
+      return { bg: "nexus.amberHoverStrong", color: "nexus.amberDeep" };
   }
 }
 
 function getStatusColor(status: PurchaseRecord["status"]) {
   switch (status) {
     case "completed":
-      return { bg: "rgba(106, 211, 154, 0.16)", color: "#86EFAC" };
+      return { bg: "nexus.successSoft", color: "#86EFAC" };
     case "pending":
-      return { bg: "rgba(232, 168, 77, 0.16)", color: "nexus.amberLight" };
+      return { bg: "nexus.amberHover", color: "nexus.amberLight" };
     case "cancelled":
-      return { bg: "rgba(232, 108, 108, 0.16)", color: "#FCA5A5" };
+      return { bg: "nexus.dangerSoft", color: "#FCA5A5" };
   }
 }
 
@@ -113,7 +113,7 @@ export default function CustomerDetailPage() {
 
   const fetchCustomer = useCallback(async () => {
     if (!id || !validateCustomerId(id)) {
-      setError("無效的客戶 ID");
+      setError("客戶 ID 格式不正確");
       setLoading(false);
       return;
     }
@@ -130,7 +130,7 @@ export default function CustomerDetailPage() {
           setCustomer(dbCustomer as CustomerDetail);
           return;
         }
-        throw new Error("找不到客戶資料");
+        throw new Error("找不到這位客戶");
       }
 
       const result = await response.json();
@@ -140,7 +140,7 @@ export default function CustomerDetailPage() {
         setCustomer(result.data || result);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "讀取失敗");
+      setError(err instanceof Error ? err.message : "客戶資料載入失敗");
     } finally {
       setLoading(false);
     }
@@ -171,12 +171,12 @@ export default function CustomerDetailPage() {
         <Alert.Root status="error" mb={4} borderRadius="crisp">
           <Alert.Indicator />
           <Alert.Content>
-            <Alert.Title>載入失敗</Alert.Title>
-            <Alert.Description>{error || "找不到指定客戶"}</Alert.Description>
+            <Alert.Title>讀取失敗</Alert.Title>
+            <Alert.Description>{error || "無法顯示客戶資料"}</Alert.Description>
           </Alert.Content>
         </Alert.Root>
         <Button onClick={goBack} variant="nexusPrimary">
-          返回上一頁
+          返回客戶列表
         </Button>
       </Box>
     );
@@ -206,12 +206,12 @@ export default function CustomerDetailPage() {
               letterSpacing="0.14em"
               textTransform="uppercase"
             >
-              客戶閱覽
+              客戶明細
             </Text>
             <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
-              客戶詳情
+              客戶資料詳情
             </Heading>
-            <Text color="nexus.textMuted">客戶 ID: {customer.id}</Text>
+            <Text color="nexus.textMuted">查看這位客戶的基本資訊、識別資料、價值指標與消費紀錄。</Text>
           </Stack>
         </Box>
         <Flex
@@ -220,9 +220,7 @@ export default function CustomerDetailPage() {
           direction={{ base: "column", md: "row" }}
           gap={3}
         >
-          <Text color="nexus.textMuted">
-            從客戶閱覽視角查看基本資料、識別資訊、價值指標與購買紀錄。
-          </Text>
+          <Text color="nexus.textMuted">客戶 ID：{customer.id}</Text>
           <Box
             w="fit-content"
             px={3}
@@ -249,10 +247,10 @@ export default function CustomerDetailPage() {
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
               <InfoItem label="Email" value={customer.email} />
-              <InfoItem label="電話" value={customer.phone} />
+              <InfoItem label="手機" value={customer.phone} />
               <InfoItem label="生日" value={formatDate(customer.birthday)} />
               <InfoItem label="註冊時間" value={formatDate(customer.registrationTime)} />
-              <InfoItem label="最近購買" value={formatDate(customer.lastPurchaseTime)} />
+              <InfoItem label="最後購買時間" value={formatDate(customer.lastPurchaseTime)} />
               <InfoItem label="會員等級" value={customer.membershipLevel.toUpperCase()} color={membership.color} />
             </SimpleGrid>
           </Card.Body>
@@ -261,11 +259,11 @@ export default function CustomerDetailPage() {
         <Card.Root>
           <Card.Body p={6}>
             <Heading size="lg" mb={6} color="nexus.text">
-              識別資訊
+              連結資訊
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
-              <InfoItem label="Facebook ID" value={customer.fbId || "未綁定"} color={customer.fbId ? "nexus.text" : "nexus.textMuted"} />
-              <InfoItem label="Line ID" value={customer.lineId || "未綁定"} color={customer.lineId ? "nexus.text" : "nexus.textMuted"} />
+              <InfoItem label="Facebook ID" value={customer.fbId || "未提供"} color={customer.fbId ? "nexus.text" : "nexus.textMuted"} />
+              <InfoItem label="Line ID" value={customer.lineId || "未提供"} color={customer.lineId ? "nexus.text" : "nexus.textMuted"} />
               <InfoItem label="Cookie ID" value={customer.cookieId} />
             </SimpleGrid>
           </Card.Body>
@@ -274,11 +272,15 @@ export default function CustomerDetailPage() {
         <Card.Root>
           <Card.Body p={6}>
             <Heading size="lg" mb={6} color="nexus.text">
-              價值指標
+              價值與行為
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
               <InfoItem label="CLV" value={formatCurrency(customer.clvValue)} color="nexus.amberLight" />
-              <InfoItem label="活躍分數" value={customer.activityScore} color={customer.activityScore > 50 ? "nexus.amberLight" : "nexus.textMuted"} />
+              <InfoItem
+                label="活躍分數"
+                value={customer.activityScore}
+                color={customer.activityScore > 50 ? "nexus.amberLight" : "nexus.textMuted"}
+              />
               <InfoItem label="營收貢獻" value={formatCurrency(customer.revenueContribution)} color="nexus.amberLight" />
             </SimpleGrid>
           </Card.Body>
@@ -288,13 +290,13 @@ export default function CustomerDetailPage() {
           <Card.Root>
             <Card.Body p={6}>
               <Heading size="lg" mb={6} color="nexus.text">
-                購買紀錄
+                消費紀錄
               </Heading>
               <Box overflowX="auto">
                 <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
-                      {["訂單編號", "購買日期", "金額", "狀態", "操作"].map((column, index) => (
+                      {["訂單編號", "日期", "金額", "狀態", "動作"].map((column, index) => (
                         <Table.ColumnHeader
                           key={column}
                           color="nexus.textMuted"
@@ -308,7 +310,7 @@ export default function CustomerDetailPage() {
                   </Table.Header>
                   <Table.Body>
                     {customer.purchaseHistory.map((purchase) => (
-                      <Table.Row key={purchase.id} _hover={{ bg: "rgba(216, 138, 26, 0.05)" }}>
+                      <Table.Row key={purchase.id} _hover={{ bg: "nexus.amberHover" }}>
                         <Table.Cell borderColor="nexus.lineSoft">
                           <Text fontWeight="semibold" color="nexus.text">
                             {purchase.orderId}
@@ -363,7 +365,7 @@ export default function CustomerDetailPage() {
                 <Stack gap={6}>
                   <SimpleGrid columns={2} gap={4}>
                     <InfoItem label="訂單編號" value={selectedPurchase.orderId} />
-                    <InfoItem label="購買日期" value={formatDate(selectedPurchase.purchaseDate)} />
+                    <InfoItem label="日期" value={formatDate(selectedPurchase.purchaseDate)} />
                     <InfoItem label="金額" value={formatCurrency(selectedPurchase.amount)} color="nexus.amberLight" />
                     <Box>
                       <Text fontSize="sm" color="nexus.textMuted" mb={1}>
@@ -375,7 +377,7 @@ export default function CustomerDetailPage() {
 
                   <Box borderTopWidth="1px" borderColor="nexus.lineSoft" pt={4}>
                     <Text fontSize="sm" color="nexus.textMuted" mb={3} fontWeight="medium">
-                      訂單商品
+                      訂單品項
                     </Text>
                     <Stack gap={3}>
                       {selectedPurchase.items.map((item) => (
@@ -419,6 +421,11 @@ export default function CustomerDetailPage() {
 
 function StatusBadge({ status }: { status: PurchaseRecord["status"] }) {
   const palette = getStatusColor(status);
+  const labels = {
+    completed: "已完成",
+    pending: "待處理",
+    cancelled: "已取消",
+  } as const;
 
   return (
     <Box
@@ -434,7 +441,7 @@ function StatusBadge({ status }: { status: PurchaseRecord["status"] }) {
       fontWeight="semibold"
       letterSpacing="0.08em"
     >
-      {status === "completed" ? "已完成" : status === "pending" ? "處理中" : "已取消"}
+      {labels[status]}
     </Box>
   );
 }

@@ -32,12 +32,12 @@ export default function ForgotPasswordPage() {
     setPasswordError(null);
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("密碼與確認密碼不一致");
+      setPasswordError("兩次輸入的密碼不一致");
       return;
     }
 
     if (newPassword.length < 6) {
-      setPasswordError("密碼至少需要 6 碼");
+      setPasswordError("密碼至少需要 6 個字元");
       return;
     }
 
@@ -52,15 +52,7 @@ export default function ForgotPasswordPage() {
   return (
     <Flex minH="100dvh" align="center" justify="center" px={4} py={8}>
       <Box w="full" maxW="880px">
-        <Card.Root
-          overflow="hidden"
-          borderRadius="shell"
-          borderWidth="1px"
-          borderColor="nexus.lineSoft"
-          bg="nexus.surfaceCard"
-          boxShadow="panel"
-          backdropFilter="blur(20px)"
-        >
+        <Card.Root borderRadius="shell">
           <Box p={{ base: 8, lg: 10 }}>
             <Stack gap={6}>
               <Stack gap={2} maxW="44rem">
@@ -70,8 +62,8 @@ export default function ForgotPasswordPage() {
                 </Heading>
                 <Text color="nexus.textMuted" lineHeight="1.8">
                   {step === "verify"
-                    ? "先確認 Email 是否存在，接著再建立新密碼。"
-                    : "請輸入新的密碼，完成後會直接回到登入頁。"}
+                    ? "先輸入 Email，我們會確認這個帳號是否存在。"
+                    : "驗證通過後，請輸入新的密碼完成重設。"}
                 </Text>
               </Stack>
 
@@ -104,15 +96,8 @@ export default function ForgotPasswordPage() {
                       />
                     </Field.Root>
 
-                    <Button
-                      type="submit"
-                      variant="nexusPrimary"
-                      size="lg"
-                      w="full"
-                      loading={isLoading}
-                      loadingText="驗證中"
-                    >
-                      驗證並繼續
+                    <Button type="submit" variant="nexusPrimary" size="lg" w="full" loading={isLoading} loadingText="驗證中">
+                      驗證 Email
                     </Button>
                   </Stack>
                 </Box>
@@ -124,7 +109,7 @@ export default function ForgotPasswordPage() {
                       <Input
                         id="newPassword"
                         type="password"
-                        placeholder="至少 6 碼"
+                        placeholder="至少 6 個字元"
                         value={newPassword}
                         onChange={(e) => {
                           setNewPassword(e.target.value);
@@ -153,15 +138,8 @@ export default function ForgotPasswordPage() {
                       {passwordError && <Field.ErrorText>{passwordError}</Field.ErrorText>}
                     </Field.Root>
 
-                    <Button
-                      type="submit"
-                      variant="nexusPrimary"
-                      size="lg"
-                      w="full"
-                      loading={isLoading}
-                      loadingText="更新中"
-                    >
-                      更新密碼
+                    <Button type="submit" variant="nexusPrimary" size="lg" w="full" loading={isLoading} loadingText="更新中">
+                      設定新密碼
                     </Button>
                   </Stack>
                 </Box>
@@ -197,7 +175,7 @@ function BadgeLike() {
       letterSpacing="0.14em"
       textTransform="uppercase"
     >
-      Account Recovery
+      帳號恢復
     </Box>
   );
 }

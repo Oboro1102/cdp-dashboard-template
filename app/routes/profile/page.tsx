@@ -43,10 +43,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <Flex minH="60dvh" align="center" justify="center" px={4}>
-        <Card.Root
-          maxW="560px"
-          w="full"
-        >
+        <Card.Root maxW="560px" w="full">
           <Card.Body p={8}>
             <Stack gap={6} align="center" textAlign="center">
               <Box
@@ -63,11 +60,9 @@ export default function ProfilePage() {
               </Box>
               <Stack gap={2}>
                 <Heading size="lg" color="nexus.text">
-                  尚未登入
+                  你尚未登入
                 </Heading>
-                <Text color="nexus.textMuted">
-                  登入後才能編輯個人資料與使用完整工作台功能。
-                </Text>
+                <Text color="nexus.textMuted">登入後才能查看或修改個人資料。</Text>
               </Stack>
               <Button variant="nexusPrimary" size="lg" w="full" onClick={() => navigate("/login")}>
                 前往登入
@@ -117,11 +112,9 @@ export default function ProfilePage() {
             個人設定
           </Badge>
           <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
-            編輯個人資料
+            編輯你的個人資料
           </Heading>
-          <Text color="nexus.textMuted">
-            更新姓名、聯絡方式與生日，讓工作台中的顯示資訊保持一致。
-          </Text>
+          <Text color="nexus.textMuted">更新姓名、手機、性別與生日，讓帳號資訊保持最新。</Text>
         </Stack>
 
         <Card.Root>
@@ -131,8 +124,8 @@ export default function ProfilePage() {
                 <Alert.Root status="success" borderRadius="crisp">
                   <Alert.Indicator />
                   <Alert.Content>
-                    <Alert.Title>更新完成</Alert.Title>
-                    <Alert.Description>個人資料已經儲存。</Alert.Description>
+                    <Alert.Title>已更新</Alert.Title>
+                    <Alert.Description>你的個人資料已成功儲存。</Alert.Description>
                   </Alert.Content>
                 </Alert.Root>
               )}
@@ -168,26 +161,16 @@ export default function ProfilePage() {
 
                   <Stack gap={3}>
                     <Heading size="md" color="nexus.text">
-                      聯絡資訊
+                      可編輯資料
                     </Heading>
                     <Field.Root required>
                       <Field.Label color="nexus.textMuted">姓名</Field.Label>
-                      <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="請輸入姓名"
-                        disabled={loading}
-                      />
+                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="輸入姓名" disabled={loading} />
                     </Field.Root>
 
                     <Field.Root>
-                      <Field.Label color="nexus.textMuted">電話</Field.Label>
-                      <Input
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="請輸入電話"
-                        disabled={loading}
-                      />
+                      <Field.Label color="nexus.textMuted">手機</Field.Label>
+                      <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="輸入手機號碼" disabled={loading} />
                     </Field.Root>
 
                     <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
@@ -202,7 +185,7 @@ export default function ProfilePage() {
                           <Select.HiddenSelect />
                           <Select.Control>
                             <Select.Trigger>
-                              <Select.ValueText placeholder="請選擇性別" />
+                              <Select.ValueText placeholder="選擇性別" />
                             </Select.Trigger>
                             <Select.IndicatorGroup>
                               <Select.Indicator />
@@ -223,12 +206,7 @@ export default function ProfilePage() {
 
                       <Field.Root>
                         <Field.Label color="nexus.textMuted">生日</Field.Label>
-                        <Input
-                          type="date"
-                          value={birthday}
-                          onChange={(e) => setBirthday(e.target.value)}
-                          disabled={loading}
-                        />
+                        <Input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} disabled={loading} />
                       </Field.Root>
                     </SimpleGrid>
                   </Stack>
@@ -243,9 +221,9 @@ export default function ProfilePage() {
                       w="full"
                       onClick={handleLogout}
                       disabled={loading}
-                      borderColor="rgba(232, 108, 108, 0.35)"
+                      borderColor="nexus.dangerSoft"
                       color="#FCA5A5"
-                      _hover={{ bg: "rgba(232, 108, 108, 0.1)", borderColor: "rgba(232, 108, 108, 0.7)" }}
+                      _hover={{ bg: "nexus.dangerHover", borderColor: "nexus.dangerHoverStrong" }}
                     >
                       登出
                     </Button>

@@ -70,7 +70,7 @@ export default function CustomerProfilePage() {
       const response = await fetch(`/api/customers?page=${page}&limit=${limit}`);
 
       if (!response.ok) {
-        throw new Error("無法載入客戶資料");
+        throw new Error("無法讀取客戶列表");
       }
 
       const result: CustomerListResponse | Customer[] = await response.json();
@@ -80,7 +80,7 @@ export default function CustomerProfilePage() {
       setTotal(Array.isArray(result) ? data.length : result.total || 0);
       setTotalPages(Array.isArray(result) ? Math.ceil(data.length / limit) : result.totalPages || 0);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "資料讀取失敗");
+      setError(err instanceof Error ? err.message : "客戶列表載入失敗");
     } finally {
       setLoading(false);
     }
@@ -122,11 +122,9 @@ export default function CustomerProfilePage() {
       <Stack gap={2} mb={6}>
         <BadgeLike />
         <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
-          客戶資料
+          客戶列表
         </Heading>
-        <Text color="nexus.textMuted">
-          以客戶閱覽視角整理清單、會員等級與交易表現。
-        </Text>
+        <Text color="nexus.textMuted">瀏覽所有客戶資料，或直接點進明細頁查看消費與識別資訊。</Text>
       </Stack>
 
       <Card.Root>
@@ -169,7 +167,7 @@ export default function CustomerProfilePage() {
 
             <Flex justify="flex-end" align="end">
               <Text color="nexus.textMuted" fontSize="sm">
-                共 {total} 筆資料
+                共 {total} 筆
               </Text>
             </Flex>
           </SimpleGrid>
@@ -184,7 +182,7 @@ export default function CustomerProfilePage() {
             <Alert.Root status="error" mb={4} borderRadius="crisp">
               <Alert.Indicator />
               <Alert.Content>
-                <Alert.Title>載入失敗</Alert.Title>
+                <Alert.Title>讀取失敗</Alert.Title>
                 <Alert.Description>{error}</Alert.Description>
               </Alert.Content>
             </Alert.Root>
@@ -196,7 +194,7 @@ export default function CustomerProfilePage() {
                 <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row>
-                      {["Email", "電話", "會員等級", "CLV", "活躍分數", "營收貢獻", "最近購買", "註冊時間", "操作"].map(
+                      {["Email", "手機", "會員等級", "CLV", "活躍度", "營收貢獻", "最後購買", "註冊時間", "動作"].map(
                         (column, index) => (
                           <Table.ColumnHeader
                             key={column}
@@ -212,7 +210,7 @@ export default function CustomerProfilePage() {
                   </Table.Header>
                   <Table.Body>
                     {customers.map((customer) => (
-                      <Table.Row key={customer.id} _hover={{ bg: "rgba(216, 138, 26, 0.05)" }}>
+                      <Table.Row key={customer.id} _hover={{ bg: "nexus.amberHover" }}>
                         <Table.Cell color="nexus.text" borderColor="nexus.lineSoft">
                           {customer.email}
                         </Table.Cell>
@@ -241,11 +239,7 @@ export default function CustomerProfilePage() {
                           {formatDate(customer.registrationTime)}
                         </Table.Cell>
                         <Table.Cell textAlign="right" borderColor="nexus.lineSoft">
-                          <Button
-                            size="sm"
-                            variant="nexusOutline"
-                            onClick={() => navigate(`/customer-detail/${customer.id}`)}
-                          >
+                          <Button size="sm" variant="nexusOutline" onClick={() => navigate(`/customer-detail/${customer.id}`)}>
                             查看
                           </Button>
                         </Table.Cell>
@@ -276,7 +270,11 @@ export default function CustomerProfilePage() {
                           {item.value}
                         </Button>
                       )}
-                      ellipsis={<Box as="span" px={2} color="nexus.textDim">...</Box>}
+                      ellipsis={
+                        <Box as="span" px={2} color="nexus.textDim">
+                          ...
+                        </Box>
+                      }
                     />
 
                     <Pagination.NextTrigger asChild>
@@ -298,12 +296,19 @@ export default function CustomerProfilePage() {
 function LevelBadge({ level }: { level: Customer["membershipLevel"] }) {
   const palette =
     level === "platinum"
-      ? { bg: "rgba(232, 168, 77, 0.18)", color: "nexus.amberLight" }
+      ? { bg: "nexus.amberHoverStrong", color: "nexus.amberLight" }
       : level === "gold"
-        ? { bg: "rgba(216, 138, 26, 0.16)", color: "nexus.amber" }
+        ? { bg: "nexus.amberHover", color: "nexus.amber" }
         : level === "silver"
-          ? { bg: "rgba(113, 128, 150, 0.18)", color: "nexus.textMuted" }
-          : { bg: "rgba(168, 101, 15, 0.18)", color: "nexus.amberDeep" };
+          ? { bg: "nexus.mutedSoft", color: "nexus.textMuted" }
+          : { bg: "nexus.amberHoverStrong", color: "nexus.amberDeep" };
+
+  const labels = {
+    bronze: "銅級",
+    silver: "銀級",
+    gold: "金級",
+    platinum: "白金",
+  } as const;
 
   return (
     <Box
@@ -319,7 +324,7 @@ function LevelBadge({ level }: { level: Customer["membershipLevel"] }) {
       fontWeight="semibold"
       letterSpacing="0.08em"
     >
-      {level.toUpperCase()}
+      {labels[level]}
     </Box>
   );
 }
@@ -340,7 +345,7 @@ function BadgeLike() {
       letterSpacing="0.14em"
       textTransform="uppercase"
     >
-      客戶閱覽
+      客戶資料
     </Box>
   );
 }

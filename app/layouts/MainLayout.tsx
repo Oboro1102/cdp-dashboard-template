@@ -37,9 +37,6 @@ const logo = (
         <Box fontSize="xl" fontWeight="semibold" color="nexus.text" lineHeight="1">
           CDP
         </Box>
-        <Box fontSize="xs" color="nexus.textDim" letterSpacing="0.16em" textTransform="uppercase">
-          Aurum Night
-        </Box>
       </Box>
     </Flex>
   </Link>
@@ -58,23 +55,9 @@ function MainLayout({ children }: { children: React.ReactNode }) {
 
       <Box bg="nexus.bg0" borderTopWidth="1px" borderColor="nexus.lineSoft" mt="auto">
         <Box px={{ base: 4, md: 8 }} py={4}>
-          <Box
-            maxW="1440px"
-            mx="auto"
-            w="full"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            gap={4}
-            flexWrap="wrap"
-          >
-            <Text textAlign="center" fontSize="xs" color="nexus.textDim">
-              &copy; 2026{currentYear > 2026 ? ` - ${currentYear}` : null} Aurum Night
-            </Text>
-            <Text fontSize="xs" color="nexus.textDim">
-              深色資料工作台
-            </Text>
-          </Box>
+          <Text textAlign="center" fontSize="xs" color="nexus.textDim">
+            &copy; 2026{currentYear > 2026 ? ` - ${currentYear}` : null} Design & Coding by ツキノリュウ with Codex.
+          </Text>
         </Box>
       </Box>
     </Flex>

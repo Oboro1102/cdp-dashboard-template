@@ -23,15 +23,7 @@ export default function LoginPage() {
   return (
     <Flex minH="100dvh" align="center" justify="center" px={4} py={8}>
       <Box w="full" maxW="1100px">
-        <Card.Root
-          overflow="hidden"
-          borderRadius="shell"
-          borderWidth="1px"
-          borderColor="nexus.lineSoft"
-          bg="nexus.surfaceCard"
-          boxShadow="panel"
-          backdropFilter="blur(20px)"
-        >
+        <Card.Root borderRadius="shell">
           <Flex direction={{ base: "column", lg: "row" }}>
             <Box flex="1" p={{ base: 8, lg: 10 }}>
               <Stack gap={6}>
@@ -39,7 +31,7 @@ export default function LoginPage() {
                   <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
                     登入
                   </Heading>
-                  <Text color="nexus.textMuted">使用測試帳號即可登入</Text>
+                  <Text color="nexus.textMuted">使用你的帳號進入工作台。</Text>
                 </Stack>
 
                 {error && (
@@ -75,7 +67,7 @@ export default function LoginPage() {
                       <Input
                         id="password"
                         type="password"
-                        placeholder="請輸入密碼"
+                        placeholder="輸入密碼"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         size="lg"
@@ -101,7 +93,7 @@ export default function LoginPage() {
                   <Text>
                     還沒有帳號？
                     <Link to="/register" style={{ color: "#E8A84D", fontWeight: 600, marginLeft: 6 }}>
-                      立即註冊
+                      建立新帳號
                     </Link>
                   </Text>
                   <Link to="/forgot-password" style={{ color: "#E8A84D", fontWeight: 600 }}>
@@ -114,26 +106,5 @@ export default function LoginPage() {
         </Card.Root>
       </Box>
     </Flex>
-  );
-}
-
-function BadgeLike() {
-  return (
-    <Box
-      w="fit-content"
-      px={3}
-      py={1}
-      borderRadius="pill"
-      borderWidth="1px"
-      borderColor="nexus.amberAlpha"
-      bg="nexus.amberAlpha"
-      color="nexus.amberLight"
-      fontSize="xs"
-      fontWeight="semibold"
-      letterSpacing="0.14em"
-      textTransform="uppercase"
-    >
-      Aurum Night
-    </Box>
   );
 }

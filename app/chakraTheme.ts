@@ -54,6 +54,18 @@ export const brand = {
     surfaceCard: "rgba(14, 19, 32, 0.98)",
     surfaceElevated: "rgba(18, 24, 39, 0.98)",
     overlay: "rgba(2, 4, 11, 0.78)",
+    heroGlow: "rgba(232, 168, 77, 0.08)",
+    heroGlowSoft: "rgba(232, 168, 77, 0.06)",
+    bgDeepSoft: "rgba(8, 15, 30, 0.55)",
+    amberHover: "rgba(216, 138, 26, 0.05)",
+    amberHoverStrong: "rgba(216, 138, 26, 0.08)",
+    successSoft: "rgba(106, 211, 154, 0.16)",
+    dangerSoft: "rgba(232, 108, 108, 0.16)",
+    dangerHover: "rgba(232, 108, 108, 0.10)",
+    dangerHoverStrong: "rgba(232, 108, 108, 0.12)",
+    mutedSoft: "rgba(113, 128, 150, 0.18)",
+    chartGrid: "rgba(39, 50, 68, 0.65)",
+    chartCursor: "rgba(216, 138, 26, 0.08)",
   },
   fonts: {
     sans:
@@ -122,11 +134,9 @@ const cardRecipe = defineSlotRecipe({
   slots: ["root", "header", "body", "footer"],
   base: {
     root: {
-      bg: "nexus.surfaceCard",
       borderWidth: "1px",
       borderColor: "nexus.lineSoft",
       borderRadius: "panel",
-      boxShadow: "panel",
       color: "nexus.text",
       overflow: "hidden",
       backdropFilter: "blur(20px)",
@@ -139,6 +149,19 @@ const cardRecipe = defineSlotRecipe({
       borderTopWidth: "1px",
       borderColor: "nexus.lineSoft",
     },
+  },
+  variants: {
+    variant: {
+      nexusSurface: {
+        root: {
+          bg: "nexus.surfaceCard",
+          boxShadow: "panel",
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "nexusSurface",
   },
 });
 
@@ -516,6 +539,21 @@ const nexusConfig = defineConfig({
           bg3: { value: brand.colors.bg3 },
           surfaceCard: { value: brand.surfaces.surfaceCard },
           surfaceElevated: { value: brand.surfaces.surfaceElevated },
+          glass: { value: brand.surfaces.glass },
+          glassStrong: { value: brand.surfaces.glassStrong },
+          overlay: { value: brand.surfaces.overlay },
+          heroGlow: { value: brand.surfaces.heroGlow },
+          heroGlowSoft: { value: brand.surfaces.heroGlowSoft },
+          bgDeepSoft: { value: brand.surfaces.bgDeepSoft },
+          amberHover: { value: brand.surfaces.amberHover },
+          amberHoverStrong: { value: brand.surfaces.amberHoverStrong },
+          successSoft: { value: brand.surfaces.successSoft },
+          dangerSoft: { value: brand.surfaces.dangerSoft },
+          dangerHover: { value: brand.surfaces.dangerHover },
+          dangerHoverStrong: { value: brand.surfaces.dangerHoverStrong },
+          mutedSoft: { value: brand.surfaces.mutedSoft },
+          chartGrid: { value: brand.surfaces.chartGrid },
+          chartCursor: { value: brand.surfaces.chartCursor },
           line: { value: brand.colors.line },
           lineSoft: { value: brand.colors.lineSoft },
           text: { value: brand.colors.text },

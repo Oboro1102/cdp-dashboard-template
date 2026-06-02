@@ -38,9 +38,6 @@ const DefaultLogo = () => (
         <Box fontSize="xl" fontWeight="semibold" color="nexus.text" lineHeight="1">
           CDP
         </Box>
-        <Box fontSize="xs" color="nexus.textDim" letterSpacing="0.16em" textTransform="uppercase">
-          Aurum Night
-        </Box>
       </Box>
     </Flex>
   </Link>
@@ -107,7 +104,7 @@ function UserPopover({
     <Popover.Root positioning={{ placement: "bottom-end", gutter: 10 }}>
       <Popover.Trigger asChild>
         <Button
-          aria-label={`開啟 ${displayName} 的使用者選單`}
+          aria-label={`使用者選單：${displayName}`}
           borderRadius="pill"
           w={10}
           h={10}
@@ -127,7 +124,7 @@ function UserPopover({
       </Popover.Trigger>
       <Popover.Positioner>
         <Popover.Content
-          bg="nexus.bg2"
+          bg="nexus.surfaceElevated"
           borderColor="nexus.lineSoft"
           boxShadow="panelSoft"
           borderRadius="panel"
@@ -151,7 +148,7 @@ function UserPopover({
                   variant="ghost"
                   justifyContent="flex-start"
                   color="red.300"
-                  _hover={{ bg: "rgba(239, 68, 68, 0.12)", color: "red.200" }}
+                  _hover={{ bg: "nexus.dangerHoverStrong", color: "red.200" }}
                   onClick={onLogout}
                 >
                   登出
@@ -209,7 +206,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
       <Box
         maxW="1440px"
         mx="auto"
-        bg="rgba(10, 16, 32, 0.84)"
+        bg="nexus.glass"
         borderWidth="1px"
         borderColor="nexus.lineSoft"
         boxShadow="panelSoft"
@@ -227,7 +224,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
               color="nexus.textMuted"
               _hover={{ color: "nexus.text", bg: "nexus.amberAlpha" }}
               cursor="pointer"
-              aria-label={open ? "關閉導覽選單" : "開啟導覽選單"}
+              aria-label={open ? "關閉選單" : "開啟選單"}
             >
               <Box fontSize="xl" lineHeight="1">
                 {open ? "×" : "≡"}
@@ -237,28 +234,14 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
             {logoElement}
           </HStack>
 
-          <HStack
-            flex={1}
-            justify="center"
-            gap={3}
-            display={{ base: "none", md: "flex" }}
-            overflowX="auto"
-          >
+          <HStack flex={1} justify="center" gap={3} display={{ base: "none", md: "flex" }} overflowX="auto">
             {navItems.map((item) => (
-              <NavItemLink
-                key={item.path}
-                item={item}
-                isActive={isActive(item.path)}
-              />
+              <NavItemLink key={item.path} item={item} isActive={isActive(item.path)} />
             ))}
           </HStack>
 
           <Box flexShrink={0}>
-            <UserPopover
-              displayName={displayName}
-              onSettings={handleSettings}
-              onLogout={handleLogout}
-            />
+            <UserPopover displayName={displayName} onSettings={handleSettings} onLogout={handleLogout} />
           </Box>
         </Flex>
       </Box>
@@ -267,7 +250,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
         <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content
-            bg="nexus.bg2"
+            bg="nexus.surfaceElevated"
             borderRightWidth="1px"
             borderColor="nexus.lineSoft"
             boxShadow="panel"
@@ -276,12 +259,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
               <Flex align="center" justify="space-between">
                 {logoElement}
                 <Drawer.CloseTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    color="nexus.textMuted"
-                    _hover={{ color: "nexus.text", bg: "nexus.amberAlpha" }}
-                  >
+                  <Button variant="ghost" size="sm" color="nexus.textMuted" _hover={{ color: "nexus.text", bg: "nexus.amberAlpha" }}>
                     關閉
                   </Button>
                 </Drawer.CloseTrigger>
@@ -291,12 +269,7 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
             <Drawer.Body px={4} py={6}>
               <VStack gap={3} align="stretch">
                 {navItems.map((item) => (
-                  <NavItemLink
-                    key={item.path}
-                    item={item}
-                    isActive={isActive(item.path)}
-                    onClick={onClose}
-                  />
+                  <NavItemLink key={item.path} item={item} isActive={isActive(item.path)} onClick={onClose} />
                 ))}
               </VStack>
             </Drawer.Body>

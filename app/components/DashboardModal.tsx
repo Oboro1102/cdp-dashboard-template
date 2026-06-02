@@ -99,7 +99,7 @@ export function DashboardModal() {
     <Box
       position="fixed"
       inset={0}
-      bg="rgba(2, 4, 11, 0.78)"
+      bg="nexus.overlay"
       backdropFilter="blur(18px)"
       zIndex={1000}
       display="flex"
@@ -108,7 +108,7 @@ export function DashboardModal() {
       p={4}
     >
       <Box
-        bg="nexus.bg2"
+        bg="nexus.surfaceElevated"
         borderRadius="shell"
         border="1px solid"
         borderColor="nexus.lineSoft"
@@ -118,20 +118,13 @@ export function DashboardModal() {
         maxH="90vh"
         overflowY="auto"
       >
-        <Flex
-          align="center"
-          justify="space-between"
-          px={6}
-          py={4}
-          borderBottomWidth="1px"
-          borderColor="nexus.lineSoft"
-        >
+        <Flex align="center" justify="space-between" px={6} py={4} borderBottomWidth="1px" borderColor="nexus.lineSoft">
           <Box>
             <Text fontSize="lg" fontWeight="semibold" color="nexus.text">
               {isEditing ? "編輯面板" : "新增面板"}
             </Text>
             <Text fontSize="sm" color="nexus.textMuted" mt={1}>
-              選擇資料來源後，系統會協助你建立基本圖表設定。
+              先選資料來源，再決定要用哪種圖表與欄位。
             </Text>
           </Box>
           <CloseButton onClick={closeModal} color="nexus.textMuted" _hover={{ color: "nexus.text" }} />
@@ -145,7 +138,7 @@ export function DashboardModal() {
             <Input
               value={name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              placeholder="請輸入面板名稱"
+              placeholder="例如：本月銷售趨勢"
             />
           </Box>
 
