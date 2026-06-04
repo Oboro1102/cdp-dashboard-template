@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import type { CSSProperties } from "react";
 import {
   Link as RouterLink,
@@ -8,8 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLocation,
-  useNavigate,
+  useLocation, Navigate
 } from "react-router";
 import type { Route } from "./+types/root";
 import { ChakraProvider, Button, Spinner } from "@chakra-ui/react";
@@ -192,7 +191,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const currentPath = location.pathname;
 
@@ -203,14 +201,20 @@ export default function App() {
   );
 
   const isProtectedRoute = !isAuthRoute;
-
   if (isProtectedRoute && !isAuthenticated) {
-    return navigate("/login", { state: { from: location }, replace: true });
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
 
   if (isAuthRoute && isAuthenticated) {
-    return navigate("/", { replace: true });
+    return <Navigate to="/" replace />;
   }
+
 
   return (
     <ChakraProvider value={system}>
