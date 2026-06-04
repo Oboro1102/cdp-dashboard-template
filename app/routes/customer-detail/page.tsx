@@ -122,7 +122,7 @@ export default function CustomerDetailPage() {
     setError(null);
 
     try {
-      const response = await fetch(`*/api/customers/${id}`);
+      const response = await fetch(`/api/customers/${id}`);
 
       if (!response.ok) {
         const dbCustomer = customerDb.getCustomerById(id);

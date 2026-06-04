@@ -133,7 +133,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                const response = await fetch("*/api/dashboard/data-sources");
+                const response = await fetch("/api/dashboard/data-sources");
                 const contentType = response.headers.get("content-type");
 
                 if (contentType && contentType.includes("text/html")) {
