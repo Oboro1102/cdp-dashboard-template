@@ -54,7 +54,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await fetch("/api/auth/login", {
+                    const response = await fetch("*/api/auth/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password }),
@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await fetch("/api/auth/register", {
+                    const response = await fetch("*/api/auth/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, password, name }),
@@ -124,7 +124,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await fetch("/api/auth/verify-email", {
+                    const response = await fetch("*/api/auth/verify-email", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email }),
@@ -150,7 +150,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await fetch("/api/auth/reset-password", {
+                    const response = await fetch("*/api/auth/reset-password", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, newPassword }),
@@ -190,7 +190,7 @@ export const useAuthStore = create<AuthState>()(
 
                 if (!token) return;
 
-                fetch("/api/auth/me", {
+                fetch("*/api/auth/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -212,7 +212,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await fetch("/api/auth/update-profile", {
+                    const response = await fetch("*/api/auth/update-profile", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

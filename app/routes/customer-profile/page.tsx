@@ -66,7 +66,7 @@ export default function CustomerProfilePage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/customers?page=${page}&limit=${limit}`);
+      const response = await fetch(`*/api/customers?page=${page}&limit=${limit}`);
 
       if (!response.ok) {
         throw new Error("無法讀取客戶列表");

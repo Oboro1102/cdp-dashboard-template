@@ -6,7 +6,7 @@ const API_DELAY = 500;
 
 export const dashboardHandlers = [
     // 獲取所有數據源
-    http.get('/api/dashboard/data-sources', async () => {
+    http.get('*/api/dashboard/data-sources', async () => {
         await delay(API_DELAY);
 
         try {
@@ -26,7 +26,7 @@ export const dashboardHandlers = [
     }),
 
     // 根據 ID 獲取特定數據源
-    http.get('/api/dashboard/data-sources/:id', async ({ params }) => {
+    http.get('*/api/dashboard/data-sources/:id', async ({ params }) => {
         await delay(API_DELAY);
 
         try {

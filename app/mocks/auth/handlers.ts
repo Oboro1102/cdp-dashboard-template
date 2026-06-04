@@ -30,7 +30,7 @@ function validateToken(token: string): { userId: string; email: string; exp: num
 
 export const authHandlers = [
     // 登入 API
-    http.post('/api/auth/login', async ({ request }) => {
+    http.post('*/api/auth/login', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
@@ -97,7 +97,7 @@ export const authHandlers = [
     }),
 
     // 註冊 API
-    http.post('/api/auth/register', async ({ request }) => {
+    http.post('*/api/auth/register', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
@@ -167,7 +167,7 @@ export const authHandlers = [
     }),
 
     // 驗證電子郵件 API
-    http.post('/api/auth/verify-email', async ({ request }) => {
+    http.post('*/api/auth/verify-email', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
@@ -204,7 +204,7 @@ export const authHandlers = [
     }),
 
     // 重設密碼 API
-    http.post('/api/auth/reset-password', async ({ request }) => {
+    http.post('*/api/auth/reset-password', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
@@ -255,7 +255,7 @@ export const authHandlers = [
     }),
 
     // 驗證 token API（可選，用於檢查登入狀態）
-    http.get('/api/auth/me', async ({ request }) => {
+    http.get('*/api/auth/me', async ({ request }) => {
         await delay(API_DELAY);
 
         const authHeader = request.headers.get('Authorization');
@@ -304,7 +304,7 @@ export const authHandlers = [
     }),
 
     // 更新個人資料 API
-    http.post('/api/auth/update-profile', async ({ request }) => {
+    http.post('*/api/auth/update-profile', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
