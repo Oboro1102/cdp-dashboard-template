@@ -12,7 +12,7 @@ export default function Home() {
   }, [fetchDataSources]);
 
   return (
-    <Flex direction="column" gap='8'>
+    <Flex direction="column">
       <Flex py={{ base: 6, md: 8 }} gap={4} flexWrap='wrap' alignItems="stretch" justifyContent='space-between'>
         <Box>
           <Flex gap="2" align="center" mb={4}>
@@ -50,7 +50,7 @@ export default function Home() {
         </Flex>
       </Flex>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={6} mb={8}>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6} mb={8}>
         {panels.map((panel) => (
           <DashboardPanel key={panel.id} panel={panel} />
         ))}

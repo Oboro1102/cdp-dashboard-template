@@ -1,10 +1,11 @@
 import { useMemo } from "react";
-import { Box, Button, Card, Flex, HStack, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Card, Center, Flex, HStack, Text, VStack } from "@chakra-ui/react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -81,7 +82,6 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
             </Text>
             <Text fontSize="sm" color="nexus.textMuted">
               {dataSource?.name || "尚未選擇資料來源"}
-              {xAxisField && yAxisField ? ` · ${xAxisField} / ${yAxisField}` : ""}
             </Text>
           </VStack>
 
@@ -104,7 +104,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
           </HStack>
         </Flex>
 
-        <Box
+        <Box flex="1"
           minH="300px"
           bg="nexus.bg1"
           borderRadius="panel"
@@ -139,28 +139,28 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
               這個資料來源目前沒有資料，所以暫時無法顯示圖表。
             </Text>
           ) : panel.chartConfig.type === "bar" ? (
-            <Box w="full" h="250px" position="relative">
-              <Text fontSize="sm" fontWeight="medium" color="nexus.textMuted" mb={4} textAlign="center">
-                {xAxisField} / {yAxisField}
-              </Text>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--aurum-chart-grid)" />
-                  <XAxis dataKey="name" stroke={brand.colors.textDim} fontSize={11} />
-                  <YAxis stroke={brand.colors.textDim} fontSize={11} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: brand.colors.bg2,
-                      borderColor: brand.colors.lineSoft,
-                      color: brand.colors.text,
-                      borderRadius: "14px",
-                    }}
-                    cursor={{ fill: "var(--aurum-chart-cursor)" }}
-                  />
-                  <Bar dataKey="value" fill={brand.colors.amber} radius={[10, 10, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Box>
+            <VStack gap={4} w="full" position="relative">
+
+              <Box w="full" h="250px" position="relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--aurum-chart-grid)" />
+                    <XAxis dataKey="name" dy={8} stroke={brand.colors.textDim} fontSize={10} />
+                    <YAxis stroke={brand.colors.textDim} fontSize={10} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: brand.colors.bg2,
+                        borderColor: brand.colors.lineSoft,
+                        color: brand.colors.text,
+                        borderRadius: "14px",
+                      }}
+                      cursor={{ fill: "var(--aurum-chart-cursor)" }}
+                    />
+                    <Bar dataKey="value" fill={brand.colors.amber} radius={[10, 10, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+            </VStack>
           ) : (
             <VStack gap={4} w="full" position="relative">
               <Box w="full" h="250px">
@@ -191,7 +191,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
                   </PieChart>
                 </ResponsiveContainer>
               </Box>
-              <VStack gap={2} align="start" w="full">
+              <Flex gap={2} align="center" justifyContent='center' w="full">
                 {pieData.map((item, index) => (
                   <HStack key={index} gap={2}>
                     <Box w="12px" h="12px" borderRadius="sm" bg={item.color} />
@@ -200,7 +200,7 @@ export function DashboardPanel({ panel }: DashboardPanelProps) {
                     </Text>
                   </HStack>
                 ))}
-              </VStack>
+              </Flex>
             </VStack>
           )}
         </Box>

@@ -190,7 +190,7 @@ export default function CustomerProfilePage() {
           {!loading && !error && (
             <>
               <Box overflowX="auto">
-                <Table.Root size="sm">
+                <Table.Root size="sm" stickyHeader>
                   <Table.Header>
                     <Table.Row>
                       {["Email", "手機", "會員等級", "CLV", "活躍度", "營收貢獻", "最後購買", "註冊時間", "動作"].map(

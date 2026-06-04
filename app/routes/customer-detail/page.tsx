@@ -292,7 +292,7 @@ export default function CustomerDetailPage() {
                 消費紀錄
               </Heading>
               <Box overflowX="auto">
-                <Table.Root size="sm">
+                <Table.Root size="sm" stickyHeader>
                   <Table.Header>
                     <Table.Row>
                       {["訂單編號", "日期", "金額", "狀態", "動作"].map((column, index) => (
