@@ -68,17 +68,38 @@ const ThreeBackground = () => {
       }
     };
 
+    const SPEED_CONFIG = {
+      // 1. 線性漂移速度倍率（原版為 1.0）
+      // 改成 2.5 代表平移速度變為 2.5 倍
+      driftMultiplier: 20,
+
+      // 2. 局部波浪擺動速度（原版 phase 遞增為 0.0008, time 乘數為 0.00005）
+      // 增加此數值會讓光暈在原地扭動得更劇烈、更頻繁
+      waveSpeedMultiplier: 2.0,
+
+      // 3. 局部波浪擺動幅度（原版為 X 軸 6 像素, Y 軸 5 像素）
+      // 數值越大，晃動的範圍越廣
+      waveAmplitudeMultiplier: 1.5,
+    };
+
     const createOrbs = () => {
-      orbs = orbPalette.map((color, index) => ({
-        x: width * (0.18 + index * 0.31),
-        y: height * (0.16 + index * 0.2),
-        radius: 260 + index * 72,
-        vx: (index % 2 === 0 ? 1 : -1) * (0.018 + index * 0.007),
-        vy: (index % 2 === 0 ? -1 : 1) * (0.014 + index * 0.005),
-        color,
-        alpha: 0.14 - index * 0.02,
-        phase: Math.random() * Math.PI * 2,
-      }));
+      orbs = orbPalette.map((color, index) => {
+        // 原版基礎速度
+        const baseVx = (index % 2 === 0 ? 1 : -1) * (0.018 + index * 0.007);
+        const baseVy = (index % 2 === 0 ? -1 : 1) * (0.014 + index * 0.005);
+
+        return {
+          x: width * (0.18 + index * 0.31),
+          y: height * (0.16 + index * 0.2),
+          radius: 260 + index * 72,
+          // 💡 套用線性漂移速度倍率
+          vx: baseVx * SPEED_CONFIG.driftMultiplier,
+          vy: baseVy * SPEED_CONFIG.driftMultiplier,
+          color,
+          alpha: 0.14 - index * 0.02,
+          phase: Math.random() * Math.PI * 2,
+        };
+      });
     };
 
     const resize = () => {
@@ -172,7 +193,7 @@ const ThreeBackground = () => {
       for (const dot of dust) {
         dot.x += dot.vx;
         dot.y += dot.vy;
-        dot.phase += 0.01;
+        dot.phase += 0.05;
 
         if (dot.x < -20) dot.x = width + 20;
         if (dot.x > width + 20) dot.x = -20;

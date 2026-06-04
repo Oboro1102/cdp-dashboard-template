@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router";
 import { Box, Button, Drawer, Flex, HStack, Popover, VStack, useDisclosure } from "@chakra-ui/react";
 import { useAuthStore } from "../stores/authStore";
-import { brand } from "../chakraTheme";
 
 export interface NavItem {
   path: string;
@@ -11,35 +10,27 @@ export interface NavItem {
 }
 
 interface NavbarProps {
-  navItems: NavItem[];
   logo?: React.ReactNode;
   onLogout?: () => void;
   onSettings?: () => void;
 }
 
+const navItems: NavItem[] = [
+  {
+    path: "/",
+    label: "數據總覽",
+  },
+  {
+    path: "/customer-profile",
+    label: "客戶資料",
+  },
+];
+
 const DefaultLogo = () => (
   <Link to="/" style={{ textDecoration: "none" }}>
-    <Flex align="center" gap={2}>
-      <Box
-        w={8}
-        h={8}
-        bg={`linear-gradient(135deg, ${brand.colors.amberDeep} 0%, ${brand.colors.amber} 55%, ${brand.colors.amberLight} 100%)`}
-        borderRadius="panel"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        boxShadow="amberGlow"
-      >
-        <Box color="nexus.bg0" fontWeight="bold" fontSize="lg">
-          C
-        </Box>
-      </Box>
-      <Box>
-        <Box fontSize="xl" fontWeight="semibold" color="nexus.text" lineHeight="1">
-          CDP
-        </Box>
-      </Box>
-    </Flex>
+    <Box fontSize="sm" fontWeight="bold" color="nexus.text">
+      CDP PLATFORM
+    </Box>
   </Link>
 );
 
@@ -65,7 +56,7 @@ function NavItemLink({
         alignItems="center"
         justifyContent="center"
         px={4}
-        py={2.5}
+        py={1}
         borderRadius="pill"
         bg={isActive ? "nexus.amberAlpha" : "transparent"}
         color={isActive ? "nexus.text" : "nexus.textMuted"}
@@ -106,10 +97,10 @@ function UserPopover({
         <Button
           aria-label={`使用者選單：${displayName}`}
           borderRadius="pill"
-          w={10}
-          h={10}
+          w={9}
+          h={9}
           px={0}
-          minW={10}
+          minW={9}
           bg="nexus.amberAlpha"
           color="nexus.text"
           borderWidth="1px"
@@ -128,10 +119,10 @@ function UserPopover({
           borderColor="nexus.lineSoft"
           boxShadow="panelSoft"
           borderRadius="panel"
-          w="220px"
+          w="125px"
         >
           <Popover.Body p={3}>
-            <VStack gap={2} align="stretch">
+            <VStack align="stretch">
               <Popover.CloseTrigger asChild>
                 <Button
                   variant="ghost"
@@ -162,7 +153,7 @@ function UserPopover({
   );
 }
 
-export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
+export function Navbar({ logo, onLogout, onSettings }: NavbarProps) {
   const { open, onToggle, onOpen, onClose } = useDisclosure();
   const location = useLocation();
   const navigate = useNavigate();
@@ -202,18 +193,15 @@ export function Navbar({ navItems, logo, onLogout, onSettings }: NavbarProps) {
   };
 
   return (
-    <Box position="sticky" top={0} zIndex={20} px={4} pt={4}>
-      <Box
-        maxW="1440px"
-        mx="auto"
+    <Box position="sticky" top={0} zIndex={20} >
+      <Box py={3} px={4}
         bg="nexus.glass"
-        borderWidth="1px"
+        borderBottomWidth="1px"
         borderColor="nexus.lineSoft"
         boxShadow="panelSoft"
         backdropFilter="blur(18px)"
-        borderRadius="shell"
       >
-        <Flex align="center" justify="space-between" minH="72px" px={{ base: 3, md: 5 }} gap={4}>
+        <Flex maxW='1440px' mx='auto' align="center" justify="space-between" gap={4}>
           <HStack gap={3} flexShrink={0}>
             <Button
               display={{ base: "flex", md: "none" }}

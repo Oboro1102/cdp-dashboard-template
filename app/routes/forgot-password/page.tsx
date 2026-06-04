@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
                 <Text color="nexus.textMuted" lineHeight="1.8">
                   {step === "verify"
                     ? "先輸入 Email，我們會確認這個帳號是否存在。"
-                    : "驗證通過後，請輸入新的密碼完成重設。"}
+                    : "請輸入新的密碼完成重設。"}
                 </Text>
               </Stack>
 

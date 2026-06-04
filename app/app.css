@@ -2,8 +2,8 @@
 
 @theme {
   --font-sans:
-    "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "TASA Explorer", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 html,
@@ -11,16 +11,30 @@ body {
   min-height: 100%;
   background:
     radial-gradient(circle at 14% 0%, var(--aurum-amber-glow), transparent 28%),
-    radial-gradient(circle at 86% 8%, var(--aurum-amber-glow-soft), transparent 24%),
-    radial-gradient(circle at 50% 100%, var(--aurum-bg-deep-soft), transparent 40%),
-    linear-gradient(180deg, var(--aurum-bg0, #060913) 0%, var(--aurum-bg1, #0a1020) 46%, #02040b 100%);
+    radial-gradient(
+      circle at 86% 8%,
+      var(--aurum-amber-glow-soft),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      var(--aurum-bg-deep-soft),
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      var(--aurum-bg0, #060913) 0%,
+      var(--aurum-bg1, #0a1020) 46%,
+      #02040b 100%
+    );
   color: var(--aurum-text, #e5e7eb);
   color-scheme: dark;
 }
 
 body {
   margin: 0;
-  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    "TASA Explorer", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
   background-color: var(--aurum-bg0, #060913);
   text-rendering: optimizeLegibility;
 }

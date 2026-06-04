@@ -211,7 +211,6 @@ export default function CustomerDetailPage() {
             <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
               客戶資料詳情
             </Heading>
-            <Text color="nexus.textMuted">查看這位客戶的基本資訊、識別資料、價值指標與消費紀錄。</Text>
           </Stack>
         </Box>
         <Flex

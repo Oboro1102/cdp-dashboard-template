@@ -41,9 +41,6 @@ export default function RegisterPage() {
                 <Heading size="xl" color="nexus.text" letterSpacing="-0.03em">
                   建立新帳號
                 </Heading>
-                <Text color="nexus.textMuted" lineHeight="1.8">
-                  填入姓名、Email 與密碼，就可以開始使用工作台。註冊完成後會直接帶你回首頁。
-                </Text>
               </Stack>
 
               {(error || localError) && (

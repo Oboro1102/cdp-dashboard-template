@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
   Alert,
-  Badge,
   Box,
   Button,
   Card,

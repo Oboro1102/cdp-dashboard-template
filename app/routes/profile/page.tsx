@@ -160,9 +160,6 @@ export default function ProfilePage() {
                   </Stack>
 
                   <Stack gap={3}>
-                    <Heading size="md" color="nexus.text">
-                      可編輯資料
-                    </Heading>
                     <Field.Root required>
                       <Field.Label color="nexus.textMuted">姓名</Field.Label>
                       <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="輸入姓名" disabled={loading} />
@@ -214,18 +211,6 @@ export default function ProfilePage() {
                   <Stack gap={3} pt={2}>
                     <Button type="submit" variant="nexusPrimary" size="lg" w="full" loading={loading}>
                       儲存變更
-                    </Button>
-                    <Button
-                      variant="nexusOutline"
-                      size="lg"
-                      w="full"
-                      onClick={handleLogout}
-                      disabled={loading}
-                      borderColor="nexus.dangerSoft"
-                      color="#FCA5A5"
-                      _hover={{ bg: "nexus.dangerHover", borderColor: "nexus.dangerHoverStrong" }}
-                    >
-                      登出
                     </Button>
                   </Stack>
                 </Stack>

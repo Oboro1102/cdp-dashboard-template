@@ -51,7 +51,7 @@ function LayoutFallback() {
 function ErrorFallback({ message, details, stack }: { message: string; details: string; stack?: string }) {
   return (
     <main
-      className="min-h-[100dvh] flex items-center justify-center p-4"
+      className="min-h-dvh flex items-center justify-center p-4"
       style={{
         background: brand.colors.bg0,
         color: brand.colors.text,
@@ -94,7 +94,7 @@ function ErrorFallback({ message, details, stack }: { message: string; details: 
               marginBottom: "1.5rem",
             }}
           >
-            <p style={{ fontSize: "0.875rem", color: brand.colors.text, fontFamily: brand.fonts.mono }}>
+            <p style={{ fontSize: "0.875rem", color: brand.colors.text }}>
               {message}
             </p>
             {import.meta.env.DEV && stack && (
@@ -140,9 +140,19 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=TASA+Explorer:wght@400..800&display=swap",
   },
 ];
+
+export function meta() {
+  return [
+    { title: "CDP 系統模板" },
+    {
+      name: "description",
+      content: "檢視資料來源、建立面板，並把資料圖表放進同一個工作台。",
+    },
+  ];
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
