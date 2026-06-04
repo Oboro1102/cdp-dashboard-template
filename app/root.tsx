@@ -18,7 +18,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import { useAuthStore } from "./stores/authStore";
 import "./app.css";
 
-if (import.meta.env.DEV && !import.meta.env.SSR) {
+if (typeof window !== "undefined") {
   import("./mocks")
     .then(({ startMocks }) => {
       startMocks();
