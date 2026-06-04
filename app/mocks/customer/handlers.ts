@@ -6,7 +6,7 @@ const API_DELAY = 300;
 
 export const customerHandlers = [
     // 取得會員列表 API - 支援分頁和查詢
-    http.get('/api/customers', async ({ request }) => {
+    http.get('*/api/customers', async ({ request }) => {
         await delay(API_DELAY);
 
         try {
@@ -64,7 +64,7 @@ export const customerHandlers = [
     }),
 
     // 取得單一會員詳細資料 API
-    http.get('/api/customers/:id', async ({ params }) => {
+    http.get('*/api/customers/:id', async ({ params }) => {
         await delay(API_DELAY);
 
         try {
