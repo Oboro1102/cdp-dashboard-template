@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import type { CSSProperties } from "react";
 import {
+  Link as RouterLink,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -11,8 +12,9 @@ import {
   useNavigate,
 } from "react-router";
 import type { Route } from "./+types/root";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Button, Spinner } from "@chakra-ui/react";
 import { brand, system } from "./chakraTheme";
+import AuthLayout from "./layouts/AuthLayout";
 import { useAuthStore } from "./stores/authStore";
 import "./app.css";
 
@@ -43,7 +45,7 @@ function LayoutFallback() {
         fontFamily: brand.fonts.sans,
       }}
     >
-      載入中
+      <Spinner size="xl" />
     </div>
   );
 }
@@ -51,22 +53,22 @@ function LayoutFallback() {
 function ErrorFallback({ message, details, stack }: { message: string; details: string; stack?: string }) {
   return (
     <main
-      className="min-h-dvh flex items-center justify-center p-4"
+      className="w-full"
       style={{
-        background: brand.colors.bg0,
         color: brand.colors.text,
         fontFamily: brand.fonts.sans,
       }}
     >
       <div
         style={{
-          maxWidth: "28rem",
+          maxWidth: "30rem",
           width: "100%",
+          margin: "0 auto",
           background: brand.surfaces.glassStrong,
           border: `1px solid ${brand.colors.lineSoft}`,
           borderRadius: brand.radii.panel,
           boxShadow: brand.shadows.panel,
-          padding: "2rem",
+          padding: "2.25rem",
         }}
       >
         <div className="text-center">
@@ -81,50 +83,42 @@ function ErrorFallback({ message, details, stack }: { message: string; details: 
           >
             !
           </div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: brand.colors.text, marginBottom: "0.5rem" }}>
+          <h1
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              color: brand.colors.text,
+              marginBottom: "0.5rem",
+            }}
+          >
             {message}
           </h1>
-          <p style={{ color: brand.colors.textMuted, marginBottom: "1rem" }}>{details}</p>
-          <div
-            style={{
-              background: brand.colors.bg1,
-              border: `1px solid ${brand.colors.lineSoft}`,
-              borderRadius: brand.radii.crisp,
-              padding: "1rem",
-              marginBottom: "1.5rem",
-            }}
-          >
-            <p style={{ fontSize: "0.875rem", color: brand.colors.text }}>
-              {message}
-            </p>
-            {import.meta.env.DEV && stack && (
-              <pre
-                style={{
-                  fontSize: "0.75rem",
-                  color: brand.colors.textDim,
-                  marginTop: "0.5rem",
-                  overflowX: "auto",
-                  whiteSpace: "pre-wrap",
-                }}
-              >
-                {stack}
-              </pre>
-            )}
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              background: `linear-gradient(90deg, ${brand.colors.amberDeep}, ${brand.colors.amber})`,
-              color: brand.colors.bg0,
-              padding: "0.75rem 1.5rem",
-              borderRadius: brand.radii.pill,
-              border: "none",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            重新整理
-          </button>
+          <p style={{ color: brand.colors.textMuted, marginBottom: "1.5rem" }}>{details}</p>
+          {import.meta.env.DEV && stack && (
+            <pre
+              style={{
+                background: brand.colors.bg1,
+                border: `1px solid ${brand.colors.lineSoft}`,
+                borderRadius: brand.radii.crisp,
+                color: brand.colors.textDim,
+                fontSize: "0.75rem",
+                lineHeight: 1.6,
+                marginBottom: "1.5rem",
+                maxHeight: "14rem",
+                overflow: "auto",
+                padding: "1rem",
+                textAlign: "left",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {stack}
+            </pre>
+          )}
+          <Button asChild>
+            <RouterLink to="/">
+              返回首頁
+            </RouterLink>
+          </Button>
         </div>
       </div>
     </main>
@@ -244,5 +238,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     stack = error.stack;
   }
 
-  return <ErrorFallback message={message} details={details} stack={stack} />;
+  return (
+    <ChakraProvider value={system}>
+      <Suspense fallback={<LayoutFallback />}>
+        <AuthLayout>
+          <ErrorFallback message={message} details={details} stack={stack} />
+        </AuthLayout>
+      </Suspense>
+    </ChakraProvider>
+
+  );
 }
