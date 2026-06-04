@@ -193,20 +193,24 @@ export default function App() {
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+
   const currentPath = location.pathname;
 
-  const isAuthRoute = AUTH_ROUTES.some((route) => currentPath === route || currentPath.startsWith(`${route}/`));
+  const isAuthRoute = AUTH_ROUTES.some(
+    (route) =>
+      currentPath === route ||
+      currentPath.startsWith(`${route}/`)
+  );
 
-  useEffect(() => {
-    if (!isAuthRoute && !isAuthenticated) {
-      navigate("/login", { state: { from: location }, replace: true });
-      return;
-    }
+  const isProtectedRoute = !isAuthRoute;
 
-    if (isAuthRoute && isAuthenticated) {
-      navigate("/", { replace: true });
-    }
-  }, [isAuthenticated, isAuthRoute, navigate, location]);
+  if (isProtectedRoute && !isAuthenticated) {
+    return navigate("/login", { state: { from: location }, replace: true });
+  }
+
+  if (isAuthRoute && isAuthenticated) {
+    return navigate("/", { replace: true });
+  }
 
   return (
     <ChakraProvider value={system}>
