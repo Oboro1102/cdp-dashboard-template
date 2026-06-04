@@ -1,0 +1,1 @@
+import{r as o}from"./rolldown-runtime-rasZmNIJ.js";import{n,t as e}from"./jsx-runtime-BmwTE9Y0.js";import{t as a}from"./button--1D0bLK7.js";var i=e(),m=o(n(),1),u=(0,m.forwardRef)(function(r,t){return(0,i.jsx)(a,{px:"0",py:"0",_icon:{fontSize:"1.2em"},ref:t,...r})});u.displayName="IconButton";export{u as t};

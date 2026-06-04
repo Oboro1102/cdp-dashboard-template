@@ -1,0 +1,1 @@
+import{i as t}from"./flex-CUaAu0is.js";var e=t("select").parts("label","positioner","trigger","indicator","clearTrigger","item","itemText","itemIndicator","itemGroup","itemGroupLabel","list","content","root","control","valueText"),a=e.build();export{a as n,e as t};

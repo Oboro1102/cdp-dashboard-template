@@ -6,7 +6,7 @@ export const startMocks = () => {
     if (typeof window !== 'undefined') {
         worker.start({
             serviceWorker: {
-                url: '/mockServiceWorker.js',
+                url: '/cdp-dashboard-template/mockServiceWorker.js',
             },
             // 允許未處理的請求直接通過（方便開發）
             onUnhandledRequest: 'bypass',

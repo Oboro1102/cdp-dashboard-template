@@ -1,0 +1,1 @@
+import{i as r}from"./flex-CUaAu0is.js";var o=r("popover").parts("arrow","arrowTip","anchor","trigger","indicator","positioner","content","title","description","closeTrigger"),a=o.build();export{a as n,o as t};
