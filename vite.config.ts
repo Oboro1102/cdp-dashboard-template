@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter()],
+  base: '/cdp-dashboard-template/',
   resolve: {
     tsconfigPaths: true,
   },

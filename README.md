@@ -101,15 +101,6 @@ app/
 
 ## 🚀 部署
 
-### Docker 部署
-
-```bash
-docker build -t cdp-dashboard .
-
-# 運行容器
-docker run -p 3000:3000 cdp-dashboard
-```
-
 ### 手動部署
 
 部署 `npm run build` 的輸出：
