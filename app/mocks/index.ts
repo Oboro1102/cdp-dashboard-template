@@ -28,7 +28,6 @@ function setupApiInterceptor(): void {
 
         // B. 攔截原生 XMLHttpRequest (Axios 底層)
         const originalOpen = XMLHttpRequest.prototype.open;
-        // 這裡使用定製的參數型別以符合原本的 XMLHttpRequestBodyInit 規範
         XMLHttpRequest.prototype.open = function (
             method: string,
             url: string | URL,
@@ -37,27 +36,34 @@ function setupApiInterceptor(): void {
             if (typeof url === 'string' && url.startsWith('/api') && !url.startsWith(SUB_PATH)) {
                 url = `${SUB_PATH}${url}`;
             }
-            // @ts-ignore 或者使用強制轉型，確保相容所有多載 (Overloads)
+            // @ts-ignore
             return originalOpen.call(this, method, url, ...args);
         };
     }
 }
-// 啟動 MSW worker（推薦的瀏覽器整合方式）
+
+// 啟動 MSW worker
 export const startMocks = () => {
-    // 檢查是否為瀏覽器環境（避免 SSR 時註冊 Service Worker）
+    // 檢查是否為瀏覽器環境
     if (typeof window !== 'undefined') {
         setupApiInterceptor();
+
+        // ⭐ 關鍵修正：動態判斷環境來決定 Service Worker 的路徑
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const homepagePath = isLocalhost ? '/' : '/cdp-dashboard-template/';
+
         worker.start({
             serviceWorker: {
-                url: '/cdp-dashboard-template/mockServiceWorker.js',
+                // 本地端會指向 '/mockServiceWorker.js'，線上會指向 '/cdp-dashboard-template/mockServiceWorker.js'
+                url: `${homepagePath}mockServiceWorker.js`,
                 options: {
-                    scope: '/cdp-dashboard-template/',
+                    scope: homepagePath,
                 },
             },
-            // 允許未處理的請求直接通過（方便開發）
             onUnhandledRequest: 'bypass',
         });
-        console.log('[MSW] Mock Service Worker 已啟動');
+
+        console.log(`[MSW] Mock Service Worker 已啟動 (環境範圍: ${homepagePath})`);
     }
 };
 
