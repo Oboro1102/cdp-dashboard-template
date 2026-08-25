@@ -77,6 +77,103 @@ npm run dev
 - ✅ **SQL 注入防護** - ID 格式驗證
 - ✅ **JWT 安全** - token 過期檢查
 
+## 🗄️ 真實後端資料庫規格
+
+以下規格依據 `app/mocks/` 中的模擬資料庫定義，說明接入真實後端時所需的資料庫結構。
+
+### 🧑 使用者表（Auth 模組）
+
+依據 `app/mocks/auth/db.ts` 的 `MockUser`：
+
+| 欄位 | 型別 | 說明 | 預設/約束 |
+| --- | --- | --- | --- |
+| `id` | string / UUID | 主鍵，使用者唯一識別碼 | PK, auto-increment |
+| `email` | string | 電子郵件，登入憑證 | UNIQUE, NOT NULL |
+| `password` | string | 密碼（**bcrypt 哈希儲存**，絕不存明文） | NOT NULL |
+| `name` | string | 使用者名稱 | NOT NULL |
+| `createdAt` | datetime | 建立時間 | DEFAULT now() |
+
+> 🔒 後端需提供 `hash()` / `verify()` 對應的 bcrypt（建議 cost factor ≥ 10），並以 email 查詢驗證憑證。
+
+### 👥 會員表（Customer 模組）
+
+依據 `app/mocks/customer/db.ts` 的 `Customer`：
+
+| 欄位 | 型別 | 說明 |
+| --- | --- | --- |
+| `id` | string / UUID | 主鍵，會員唯一識別碼 |
+| `email` | string | 電子郵件 |
+| `phone` | string | 手機號碼（09 開頭） |
+| `registrationTime` | datetime | 註冊時間 |
+| `birthday` | date | 生日 |
+| `membershipLevel` | enum | 會員等級：`bronze` / `silver` / `gold` / `platinum` |
+| `fbId` | string \| null | Facebook ID（可為空） |
+| `lineId` | string \| null | Line ID（可為空） |
+| `cookieId` | string | Cookie 識別碼 |
+| `clvValue` | number | CLV 顧客終身價值 |
+| `activityScore` | integer (0–100) | 活躍度分數 |
+| `revenueContribution` | number | 營收貢獻總額 |
+| `lastPurchaseTime` | datetime \| null | 最後購買時間 |
+
+#### 購買記錄表（PurchaseRecord）
+
+| 欄位 | 型別 | 說明 |
+| --- | --- | --- |
+| `id` | string / UUID | 主鍵 |
+| `orderId` | string | 訂單編號（如 `ORD-0001-001`） |
+| `customerId` | FK → Customer.id | 所屬會員（一對多關聯） |
+| `purchaseDate` | datetime | 購買日期 |
+| `amount` | number | 訂單金額 |
+| `status` | enum | `completed` / `pending` / `cancelled` |
+
+#### 購買項目表（PurchaseItem）
+
+| 欄位 | 型別 | 說明 |
+| --- | --- | --- |
+| `productId` | string | 商品 ID |
+| `productName` | string | 商品名稱 |
+| `quantity` | integer | 數量 |
+| `price` | number | 單價 |
+| `purchaseRecordId` | FK → PurchaseRecord.id | 所屬訂單（一對多關聯） |
+
+### 📊 數據源表（Dashboard 模組）
+
+依據 `app/mocks/dashboard/db.ts` 的 `DataSource`：
+
+| 欄位 | 型別 | 說明 |
+| --- | --- | --- |
+| `id` | string / UUID | 主鍵，數據源唯一識別碼 |
+| `name` | string | 數據源名稱（如「用戶註冊數據」） |
+| `type` | string | 類型：`user` / `order` / `product` / `survey` / `analytics` 等 |
+| `fields` | JSON | 欄位定義陣列：`{ name, type: 'string' \| 'number' \| 'date', label }` |
+| `data` | JSON | 資料記錄陣列（key-value 形式） |
+
+> 💡 `fields` 與 `data` 在真實後端可存為 JSON 欄位（PostgreSQL `JSONB`），或拆成正規化的 `data_source_fields` / `data_records` 表以利查詢與聚合。
+
+### 🔗 實體關聯
+
+```
+users (auth)          customers            data_sources
+┌──────────┐          ┌───────────────┐     ┌──────────────┐
+│ id       │          │ id            │     │ id           │
+│ email    │          │ ...會員欄位    │     │ name/type    │
+│ password │          ├───────────────┤     │ fields (JSON)│
+│ name     │          │ purchase_     │     │ data   (JSON)│
+└──────────┘          │ records       │     └──────────────┘
+                      │  └ purchase_  │
+                      │    items      │
+```
+
+### ⚙️ API 行為對照（後端需支援的查詢）
+
+| Mock 方法 | 對應後端行為 |
+| --- | --- |
+| `findUserByEmail(email)` | 以 email 精確查詢使用者（含索引） |
+| `createUser(...)` | 建立使用者，密碼先經 bcrypt 哈希 |
+| `validateUser(email, password)` | 查詢 + bcrypt 比對憑證 |
+| `getCustomers({ page, limit, id })` | 分頁列表（預設 `page=1`, `limit=10`），回傳 `{ customers, total, page, limit }`；指定 `id` 時回傳單一會員 |
+| `getDataSources()` / `getDataSourceById(id)` | 列出所有數據源 / 依 ID 取得單一數據源 |
+
 ## 🏗️ 專案結構
 
 ```
